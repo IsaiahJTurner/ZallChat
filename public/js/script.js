@@ -71,7 +71,7 @@ function sendMessage() {
 }
 
 function renderMessageHTML(message) {
-	var messageHTML = $('<div class="message"><a class="profileLink"><img class="profile" src=""></a><div class="main-content"><a class="name" href="#"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
+	var messageHTML = $('<div class="message"><a target="_blank" class="profileLink"><img class="profile" src=""></a><div class="main-content"><a class="name" href="#" target="_blank"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
 	messageHTML.attr("id", message._id);
 	messageHTML.find(".profile").attr("src", message._user.profile);
 	messageHTML.find(".profileLink").attr("href", "https://twitter.com/" + message._user.username);
