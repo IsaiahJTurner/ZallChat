@@ -4,7 +4,7 @@ Zall Chat is a chat app I created that is specifically designed for YouTubers wi
 #License
 The MIT License (MIT)
 
-Copyright (c) [year] [fullname]
+Copyright (c) 2014 Isaiah J Turner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
