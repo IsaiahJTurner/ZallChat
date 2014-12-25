@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title><%= page %> - <%= settings.title.value %></title>
+    <meta name="description" content="<%= settings.description.value %>">
+    <meta name="author" content="@IsaiahJTurner">
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1,target-densitydpi=device-dpi, user-scalable=no">
+    <link rel="canonical" href="http://zallchat.isaiah.tv/" />
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <link rel="icon" type="image/ico" href="/img/favicon.ico">
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= page %> - <%= settings.title.value %>" />
+    <meta property="og:description" content="<%= settings.description.value %>" />
+    <meta property="og:url" content="http://zallchat.isaiah.tv/" />
+    <meta property="og:site_name" content="<%= settings.title.value %>" />
+    <meta property="article:publisher" content="https://www.youtube.com/AlexisGZall" />
+    <link rel="apple-touch-icon" href="/img/icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+    if (("standalone" in window.navigator) && window.navigator.standalone) {
+      // For iOS Apps
+      $('a').on('click', function(e){
+        e.preventDefault();
+        var new_location = $(this).attr('href');
+        if (new_location != undefined && new_location.substr(0, 1) != '#' && $(this).attr('data-method') == undefined && $(this).attr('target') != "_blank"){
+          window.location = new_location;
+        }
+      });
+    }
+  });
+  </script>
+    <!--[if lt IE 9]>
+    	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+    </head>
+    <body>
+        <%- body %>
+    
+</body>
+</html>

@@ -1,0 +1,21 @@
+<div class="container">
+  <% for (key in settings) {
+  var setting = settings[key]; %>
+  <form method="post" action="/settings">
+    <input type="hidden" name="key"  value="<%= setting.key %>">
+    <label for="<%= setting.key %>"><%= setting.label %>: </label>
+    <% if (setting.type == "number") { %>
+    <input id="<%= setting.key %>" type="number" name="value" value="<%= setting.value %>">
+    <% } else if (setting.type == "longtext") { %>
+    <textarea  id="<%= setting.key %>" name="value"><%= setting.value %></textarea>
+    <% } else if (setting.type == "text"){ %>
+    <input id="<%= setting.key %>" type="text" name="value" value="<%= setting.value %>">
+    <% } else { %>
+    <%= setting.type %> is not a valid type for editing <%= setting.label %> (<%= setting.key %>)
+    <% } %>
+    <button type="submit" class="btn btn-small btn-default">Update</button>
+  </form>
+  <% } %>
+</div>
+
+<script type="application/javascript" src="js/settings.js"></script>

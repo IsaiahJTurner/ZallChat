@@ -1,0 +1,74 @@
+<body id="messages">
+	<header>
+		<div class="logo">
+			<a href="/"><%= settings.headertitle.value %></a>
+		</div>
+		<div class="me">
+			<!--<div id="name"><%= session._user.name %></div>-->
+			<a id="username" href="/twitter/logout" target="_blank">@<%= session._user.username %></a>
+			<a href="/twitter/logout" target="_blank"><img id="profile" src="<%= session._user.profile %>"></a>
+		</div>
+	</header>
+	<div id="content">
+		<div class="messages">
+			<div id="reader">
+				<div id="loading">
+					<%= settings.loadinglabel.value %>
+					<div class="loading">
+					  <div class="rect1"></div>
+					  <div class="rect2"></div>
+					  <div class="rect3"></div>
+					  <div class="rect4"></div>
+					  <div class="rect5"></div>
+					</div>
+				</div>
+				<!-- messages will go here -->
+			</div>
+			<div id="bar">
+				<form id="message-form">
+					<button type="submit">Send</button>
+					<div class="input">
+						<% if (session._user.chatting) { %>
+						<input type="text" id="message-input" placeholder="Say something!">
+						<% } else { %>
+						<input type="text" id="message-input" placeholder="Say something...">
+						<% } %>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="users">
+			<div class="section chatting" ondrop="drop(event)" ondragover="allowDrop(event)"><%= settings.chattinglabel.value %></div>
+			<div id="chatting">
+				<% if (session._user.chatting && !session._user.owner) { %>
+				<div class="user me" id="<%= session._user._id %>">
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img draggable="true"
+ondragstart="drag(event)" class="profile" src="<%= session._user.profile %>"></a>
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
+				</div>
+				<% } %>
+				<% owners.forEach(function(user) { %>
+					<div class="user owner" id="<%= user._id %>">
+						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img draggable="true"
+ondragstart="drag(event)" class="profile" src="<%= user.profile %>"></a>
+						<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class='status <%= (user.online == true ? "online" : "offline") %>'></div></a>
+					</div>
+	  			<% }); %>
+	  			<!-- users will go here -->
+			</div>
+			<div class="section visiting" ondrop="drop(event)" ondragover="allowDrop(event)"><%= settings.visitinglabel.value %></div>
+			<div id="visiting">
+				<% if (!session._user.chatting && !session._user.owner) { %>
+				<div class="user me" id="<%= session._user._id %>">
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img draggable="true"
+ondragstart="drag(event)" class="profile" src="<%= session._user.profile %>"></a>
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
+				</div>
+				<% } %>
+				<!-- users will go here -->
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+	<script src="js/jquery.timeago.js" type="text/javascript"></script>
+	<script src="js/script.js"></script>
