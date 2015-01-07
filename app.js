@@ -130,6 +130,14 @@ var server = app.listen(port, function() {
 
 */
 var io = require('socket.io')(server);
+var redisAdapter = require('socket.io-redis');
+var redis = require('redis');
+var pub = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
+pub.auth(process.env.REDIS_PASSWORD);
+var sub = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {detect_buffers: true} );
+sub.auth(process.env.REDIS_PASSWORD);
+
+io.adapter( redisAdapter({pubClient: pub, subClient: sub}) );
 io.on('connection', function(socket) {
 	var cookies = cookie.parse(socket.handshake.headers['cookie']);
 	if (!cookies || !cookies.sid) {
