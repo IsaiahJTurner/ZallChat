@@ -1,4 +1,4 @@
-ZallChat
+ZallChat [![Build Status](https://travis-ci.org/IsaiahJTurner/ZallChat.svg?branch=master)](https://api.travis-ci.org/IsaiahJTurner/ZallChat.svg?branch=master)
 ========
 Zall Chat is a chat app I created that is specifically designed for YouTubers with a large fan base.
 #License
