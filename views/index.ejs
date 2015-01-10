@@ -3,5 +3,5 @@
 	<div class="title"><%= settings.hometitle.value %></div>
 	<div class="description"><%= settings.welcomemessage.value %></div>
 	<div class="login"><a id="login" href="/twitter">Sign in with the Twitter</a></div>
-  <a class="skip" href="/messages"><% if (session._user) { %>You're already logged in! <span class="link">Skip to chat.</span><% } else { %><span class="link">I don't have a twitter.</span><% } %></a></div>
+  <a class="skip" href="/messages"><% if (session._user) { %>You're already logged in! <span class="link">Skip to chat.</span><% } else { %><!--<span class="link">I don't have a twitter.</span>--><% } %></a></div>
 </div>
