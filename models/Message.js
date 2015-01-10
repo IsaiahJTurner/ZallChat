@@ -34,7 +34,6 @@ schema.method('toJSON', function() {
       var stars = "";
       for (ii = 0; ii < word.length; ii++) {
         stars = stars + "*";
-        console.log(stars);
       }
       message.text = message.text.replace(word, stars);
     }

@@ -17,7 +17,12 @@ var exports = module.exports = {
       detect_buffers: true
     });
     sub.auth(process.env.REDIS_PASSWORD);
-
+    var redisClient = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
+    redisClient.auth(process.env.REDIS_PASSWORD);
+    
+io.set('transports', [
+    'websocket'
+  ]);
     io.adapter(redisAdapter({
       pubClient: pub,
       subClient: sub
@@ -52,8 +57,13 @@ var exports = module.exports = {
                     redirect: "/messages"
                   });
                 }
-                if (session._user.chatting) io.sockets.emit('update user', user);
-                else io.sockets.emit('add user', user);
+                if (session._user.chatting) 
+                  io.sockets.emit('update user', user);
+               else
+                  io.sockets.emit('add user', user);
+                console.log((session._user.chatting) ? 1 : 0, session._user.chatting);
+                redisClient.set("user:" + session._user._id, (session._user.chatting) ? 0 : 1); // 1 = chatting; 0 = visitor
+
               });
             }
             socket.on('disconnect', function() {
@@ -63,8 +73,11 @@ var exports = module.exports = {
                   if (err) {
                     console.log(err);
                   }
-                  if (session._user.chatting) io.sockets.emit('update user', user);
+                  redisClient.get("user:" + session._user._id, function(err, reply) {
+                    if (reply == 1) io.sockets.emit('update user', user);
                   else io.sockets.emit('remove user', user);
+                  });
+                  
                 });
               }
               console.log('disconnected user');
@@ -92,8 +105,8 @@ var exports = module.exports = {
                       message: "You can't edit yourself.",
                       code: 12
                     });
+                  redisClient.set("user:" + user._id, (user.chatting) ? 0 : 1); // 1 = chatting; 0 = visitor
                   user.chatting = !user.chatting;
-
                   user.save(function(err, user) {
                     if (err) {
                       console.log(err);
@@ -108,35 +121,27 @@ var exports = module.exports = {
                 });
               }
             });
-            User.find({
-              $or: [{
-                chatting: true
-              }, {
-                online: true
-              }]
-            }).exec(function(err, users) {
-              socket.emit('users list', users);
-            });
             socket.on('send message', function(text) {
-              if (!session._user.chatting)
+              redisClient.get("user:" + session._user._id, function(err, reply) {
+                console.log(reply);
+                if (reply != 1) // if not chatting
                 return socket.emit('notify', {
                   message: "Hello there beautiful person who wants to chat! Literally same because I want to hear what you have to say! I pick a few random people from Twitter to join the chat so just give me some time to get to you!",
                   code: 1
                 });
 
               // naughty content handling
-              
+
               for (i = 0; i < badwords.list.length; i++) {
                 var word = badwords.list[i];
                 if (text.indexOf(word) > -1) {
                   socket.emit('notify', {
-                  message: "Woah there! Let's try to think of a nicer word than " + word + ".",
-                  code: 1
-                });
-                
+                    message: "Woah there! Let's try to think of a nicer word than " + word + ".",
+                    code: 1
+                  });
+
+                }
               }
-              }
-              
 
 
 
@@ -163,19 +168,20 @@ var exports = module.exports = {
                     });
                   }
                   for (i = 0; i < badwords.list.length; i++) {
-    var word = badwords.list[i];
-    if (message.text.indexOf(word) > -1) {
-      var stars = "";
-      for (ii = 0; ii < word.length; ii++) {
-        stars = stars + "*";
-        console.log(stars);
-      }
-      message.text = message.text.replace(word, stars);
-    }
-  }
+                    var word = badwords.list[i];
+                    if (message.text.indexOf(word) > -1) {
+                      var stars = "";
+                      for (ii = 0; ii < word.length; ii++) {
+                        stars = stars + "*";
+                      }
+                      message.text = message.text.replace(word, stars);
+                    }
+                  }
                   io.sockets.emit('new message', message);
                 });
-              })
+              });
+              });
+              
             });
           }
         });

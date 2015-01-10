@@ -11,7 +11,7 @@ var ping = function() {
 };
 ping();
 
-var socket = io(); // we use this everywhere so might as well put it at the top
+var socket = io({ transports: ['websocket'] }); // we use this everywhere so might as well put it at the top
 
 /*
 
@@ -83,9 +83,9 @@ function sendMessage() {
 }
 
 function renderMessageHTML(message) {
-  var messageHTML = $('<div class="message"><a target="_blank" class="profileLink"><img class="profile" src=""></a><div class="main-content"><a class="name" href="#" target="_blank"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
+  var messageHTML = $('<div class="message"><a target="_blank" class="profileLink"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><div class="main-content"><a class="name" href="#" target="_blank"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
   messageHTML.attr("id", message._id);
-  messageHTML.find(".profile").attr("src", message._user.profile);
+  messageHTML.find(".profile").attr("src", message._user.profile).attr("data-id", message._user._id);;
   messageHTML.find(".profileLink").attr("href", "https://twitter.com/" + message._user.username);
   messageHTML.find(".name").text(message._user.name).attr("href", "https://twitter.com/" + message._user.username);
   messageHTML.addClass("_" + message._user._id);
@@ -156,7 +156,7 @@ function insertUser(user) {
     userHTML.addClass("me");
   else if (user.owner)
     userHTML.addClass("owner")
-  userHTML.find(".profile").attr("src", user.profile);
+  userHTML.find(".profile").attr("src", user.profile).attr("data-id", user._id);
   userHTML.find(".profile-link").attr("href", "https://twitter.com/" + user.username);
   userHTML.find(".name").attr("href", "https://twitter.com/" + user.username);
   userHTML.find(".real-name").text(user.name);
@@ -185,12 +185,6 @@ function insertUser(user) {
     }
   }
 }
-socket.on('users list', function(users) {
-  users.forEach(function(user) {
-    $("#" + user._id).remove();
-    insertUser(user);
-  });
-});
 var chatting;
 socket.on('update user', function(user) {
   if ("@" + user.username == $("#username").html()) {
@@ -206,12 +200,12 @@ socket.on('update user', function(user) {
       }
     }
   }
-  $("." + user._id).find(".name").removeClass("owner visitor");
+  $("._" + user._id).find(".name").removeClass("me owner visitor");
   console.log(user.chatting);
   if (user.chatting == false)
-    $("." + user._id).find(".name").addClass("visitor");
+    $("._" + user._id).find(".name").addClass("visitor");
   else if (user.owner)
-    $("." + user._id).find(".name").addClass("owner");
+    $("._" + user._id).find(".name").addClass("owner");
   $("#" + user._id).remove();
   insertUser(user)
 });
@@ -240,12 +234,12 @@ function allowDrop(e) {
 
 function drag(e) {
   var elem = $(e.target);
-  e.dataTransfer.setData("user_id", elem.closest(".user").attr("id"));
+  e.dataTransfer.setData("user_id", elem.attr("data-id"));
 }
 
 function drop(e) {
   e.preventDefault();
   var user_id = e.dataTransfer.getData("user_id");
-  console.log(user_id);
+  if(user_id.length < 1) return console.log(user_id);
   socket.emit('toggle chatting', user_id);
 }

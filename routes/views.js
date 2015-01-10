@@ -12,7 +12,7 @@ exports.messages = function(req, res) {
 	if (!req.session || !req.session._user) res.redirect("/");
 	User.find({
 		$or: [{
-			online: false
+			online: true
 		}, {
 			owner: true
 		}, {
@@ -23,11 +23,13 @@ exports.messages = function(req, res) {
 			console.log(err);
 			return res.send("Unable to get chat owners.");
 		}
+		var visiting = new Array();
+			var chatting = new Array();
+			var owner = new Array();
 		for (i = 0; i < users.length; i++) {
-			var user = users[i],
-				visiting = new Array(),
-				chatting = new Array(),
-				owner = new Array();
+			var user = users[i];
+			console.log(user._id)
+			
 
 			if (user.owner == false && user.chatting == false)
 				visiting.push(user);
@@ -49,13 +51,11 @@ exports.messages = function(req, res) {
 						var stars = "";
 						for (ii = 0; ii < word.length; ii++) {
 							stars = stars + "*";
-							console.log(stars);
 						}
 						message.text = message.text.replace(word, stars);
 					}
 				}
 			})
-
 			res.render('messages', {
 				page: 'Messages',
 				chatting: chatting,

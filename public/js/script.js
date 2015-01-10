@@ -1,4 +1,7 @@
-
+supportsWebSockets = 'WebSocket' in window || 'MozWebSocket' in window;
+if (!supportsWebSockets) {
+  window.location = "/old";
+}
 // this fixes ios opening web app in safari
 if (("standalone" in window.navigator) && window.navigator.standalone) {
       // For iOS Apps
