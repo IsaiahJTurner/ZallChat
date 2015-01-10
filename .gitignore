@@ -3,3 +3,7 @@ node_modules
 passwords.txt
 
 config.js
+
+views/legal.ejs
+
+views/privacy.ejs

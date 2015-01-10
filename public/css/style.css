@@ -13,10 +13,10 @@ a {
 #home {
 	color: white;
 	background: url('../img/background.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 	margin-top: 50px;
 	margin-bottom: 100px;
 	font-family: HelveticaNeue-Light, 'Open Sans', sans-serif;
@@ -30,7 +30,8 @@ a {
 	font-size: 30px;
 	width: 600px;
 	margin-left: auto;
-    margin-right: auto;
+  margin-right: auto;
+  text-align: center;
 }
 .login {
 	margin-top: 35px;
@@ -39,14 +40,21 @@ a {
 }
 #login {
 	font-size: 25px;
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 	background: rgba(95,189,255,0.70);
 	border: 1px solid rgba(0,0,0,0.20);
 	padding: 15px 50px;
 	border-radius: 9px;
 }
-
+.skip {
+	text-align: center;
+	display: block;
+	margin-top: 20px;
+}
+.skip span.link {
+	text-decoration: underline;
+}
 /*
 
 	MESSAGE PAGE STYLES
@@ -159,6 +167,10 @@ header .me #profile {
 #content .messages #reader .message .main-content .name.owner {
 	color: #FF98E6;
 }
+#content .messages #reader .message .main-content .name.visitor {
+	color: #B0B0B0;
+}
+
 #content .messages #reader .message .main-content .time {
 	font-size: 15px;
 	color: #AEAEAE;

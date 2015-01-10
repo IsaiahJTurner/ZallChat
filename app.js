@@ -14,12 +14,10 @@ var express = require('express'),
 	Session = require("./models/Session"),
 	User = require("./models/User"),
 	Setting = require("./models/Setting"),
-	Flutter = require('./Flutter'),
-	uuid = require('node-uuid'),
-	cookie = require('cookie'),
-	Message = require('./models/Message');
-	if (!process.env.MONGOURL)
-		require("./config");
+	Flutter = require('./routes/auth'),
+	uuid = require('node-uuid');
+if (!process.env.MONGOURL)
+	require("./config");
 fs.readdirSync("./routes").forEach(function(file) {
 	require("./routes/" + file);
 });
@@ -50,6 +48,45 @@ app.use(function(req, res, next) {
 	res.header("X-powered-by", "@IsaiahJTurner")
 	next()
 });
+
+var minutes = 5,
+	the_interval = minutes * 60 * 1000;
+var setInactiveUsersOffline = function() {
+	var time = new Date();
+	time.setMinutes(time.setMinutes() - 25); // there is an inacuracy of 30 minutes if the server crashes, unfortunatly
+	User.update({
+		$or: [{
+			$and: [
+				{
+					last_seen: {
+						$lt: time
+					}
+				}, {
+					online: true
+				}
+			]
+		}, {
+			last_seen: null
+		}]
+	}, {
+		$set: {
+			online: false
+		}
+	}, {
+		multi: true
+	}, function(err, numAffected) {
+		if (numAffected > 0) console.log("THIS IS BAD! " + numAffected + " users were not marked as offline!");
+	})
+}
+setInterval(setInactiveUsersOffline, the_interval); // run every minute
+setInactiveUsersOffline();
+
+// this will probably really fuck you up in the future and leave your running in circles.
+// basically, with iOS web apps the standard res.redirect will leave the web app (that looks like a real app)
+// and open in safari. by using a js redirect, the user stays in the app.
+express.response.redirect = function(url) {
+	this.send('<html><head><title>Redirect</title><script type="text/javascript"> location.href = "' + url + '";</script></head><body><a href="' + url + '">redirecting to ' + url + '</a></body></html>')
+};
 app.use(function(req, res, next) {
 	function createSession() {
 		var sid = uuid.v1();
@@ -58,15 +95,14 @@ app.use(function(req, res, next) {
 		});
 		session.save(function(err) {
 			if (err) {
-				res.json({
+				console.log(err);
+				return res.json({
 					success: false,
 					error: {
 						code: 12,
 						message: "Unable to save with your session."
 					}
 				});
-				next();
-				return;
 			}
 			req.session = session;
 			res.cookie('sid', sid);
@@ -97,7 +133,6 @@ app.use(function(req, res, next) {
 			var key = setting.key;
 			settingsDict[key] = setting;
 		}
-		console.log(settingsDict);
 		req.settings = settingsDict;
 		res.locals({
 			settings: settingsDict,
@@ -109,202 +144,28 @@ app.use(function(req, res, next) {
 var flutter = new Flutter({
 	consumerKey: process.env.TWITTER_KEY,
 	consumerSecret: process.env.TWITTER_SECRET,
-	loginCallback: 'http://zallchat.isaiah.tv/twitter/callback'
+	loginCallback: process.env.TWITTER_CALLBACK
 });
 app.get('/', routes.views.home);
 app.get('/messages', routes.views.messages);
 app.get('/settings', routes.views.settings);
 
-app.post('/settings', routes.settings.update);
+app.post('/api/1.0/ping', routes.chat.ping);
+app.get('/api/1.0/messages', routes.messages.get);
 
+// deprecated method implementations
+app.post('/settings', routes.settings.update);
 app.get('/twitter', flutter.connect);
 app.get('/twitter/logout', flutter.logout);
 app.get('/twitter/callback', flutter.auth);
+// future method implementations
+app.post('/api/1.0/settings', routes.settings.update);
+app.get('/api/1.0/twitter', flutter.connect);
+app.get('/api/1.0/twitter/logout', flutter.logout);
+app.get('/api/1.0/twitter/callback', flutter.auth);
+
 var port = Number(process.env.PORT || 3000);
 var server = app.listen(port, function() {
 	console.log("Listening on " + port);
 });
-/*
-
-	BEGIN MESSAGING CODE
-
-*/
-var io = require('socket.io')(server);
-io.on('connection', function(socket) {
-	var cookies = cookie.parse(socket.handshake.headers['cookie']);
-	if (!cookies || !cookies.sid) {
-		return socket.disconnect('unauthorized');
-	} else {
-		Session.findOne({
-			sid: cookies.sid
-		}).populate('_user').exec(function(err, session) {
-			if (!session || err || !session._user) {
-				return socket.disconnect('unauthorized');
-			} else {
-				if (!session._user.online) {
-					session._user.online = true;
-					if (session._user.socket)
-						if (io.sockets.connected[session._user.socket]) {
-						console.log("bye bye" +io.sockets.connected[session._user.socket]);
-							io.sockets.connected[session._user.socket].disconnect('logged in somewhere else');
-						}
-							
-					session._user.socket = socket.id;
-					session._user.save(function(err, user) {
-						if (err) {
-							console.log(err);
-							return socket.emit('notify', {
-								message: "Unable to update your status to online.",
-								code: 3,
-								redirect: "/messages"
-							});
-						}
-						if (session._user.chatting) io.sockets.emit('update user', user);
-						else io.sockets.emit('add user', user);
-					});
-				}
-				socket.on('disconnect', function() {
-					if (session && session._user) {
-						session._user.online = false;
-						session._user.save(function(err, user) {
-							if (err) {
-								console.log(err);
-							}
-							if (session._user.chatting) io.sockets.emit('update user', user);
-							else io.sockets.emit('remove user', user);
-						});
-					}
-					console.log('disconnected user');
-				});
-				socket.on('update session', function() {
-					Session.findOne({
-			sid: cookies.sid
-		}).populate('_user').exec(function(err, newSession) {
-			if (!session || err || !session._user) {
-				return socket.disconnect('unauthorized');
-			} else {
-				// user is logged in
-				 session = newSession;
-				 console.log(newSession);
-				}
-				});
-				});
-				socket.on("toggle chatting", function(userID) {
-					if (session && session._user && session._user.admin) {
-						User.findOne({
-							_id: userID
-						}, function(err, user) {
-							if (err) {
-								console.log(err);
-								return socket.emit("notify", {
-									message: "Unable to get the user.",
-									code: 9,
-									redirect: "/messages"
-								});
-							}
-							if (user.owner)
-								return socket.emit("notify", {
-									message: "You can't edit the group owner.",
-									code: 11
-								});
-							else if (user._id == session._user._id)
-								return socket.emit("notify", {
-									message: "You can't edit yourself.",
-									code: 12
-								});
-							user.chatting = !user.chatting;
-							if (io.sockets.connected[user.socket])
-								io.sockets.connected[user.socket].disconnect('logged in somewhere else');
-								
-							user.save(function(err, user) {
-								if (err) {
-									console.log(err);
-									return socket.emit("notify", {
-										message: "Unable to get the user.",
-										code: 10,
-										redirect: "/messages"
-									});
-								}
-								console.log("changing")
-								io.sockets.emit('update user', user);
-							});
-						});
-					}
-				});
-				Message.find().sort({
-					created_at: -1
-				}).limit(50).populate("_user").exec(function(err, messages) {
-					if (err) {
-						return socket.emit('notify', {
-							message: "There was a database error.",
-							code: 6,
-							redirect: "/messages"
-						});
-					}
-					socket.emit('old messages', messages);
-					socket.on("old messages", function(date) {
-						Message.find({
-							"created_at": {
-								$lt: new Date(date)
-							}
-						}).sort({
-							created_at: -1
-						}).limit(50).populate("_user").exec(function(err, messages) {
-							if (err) {
-								return socket.emit('notify', {
-									message: "There was a database error.",
-									code: 7,
-									redirect: "/messages"
-								});
-							}
-							socket.emit('old messages', messages);
-						});
-					});
-				});
-				User.find({
-					$or: [{
-						chatting: true
-					}, {
-						online: true
-					}]
-				}).exec(function(err, users) {
-					socket.emit('users list', users);
-				});
-				socket.on('send message', function(text) {
-					if (!session._user.chatting) return socket.emit('notify', {
-						message: "Hello there beautiful person who wants to chat! Literally same because I want to hear what you have to say! I pick a few random people from Twitter to join the chat so just give me some time to get to you!",
-						code: 1
-					});
-					var message = new Message({
-						_user: session._user,
-						text: text
-					});
-					message.save(function(err, message) {
-						if (err) {
-							return socket.emit("notify", {
-								message: "Couldn't send the message.",
-								code: 2,
-								redirect: "/messages"
-							});
-						}
-						Message.populate(message, {
-							path: "_user"
-						}, function(err, message) {
-							if (err) {
-								return socket.emit('notify', {
-									message: "Could not get your information.",
-									code: 2,
-									redirect: "/messages"
-								});
-							}
-							io.sockets.emit('new message', message);
-						});
-					})
-				});
-			}
-		});
-	}
-	socket.on('disconnect', function() {
-		console.log('disconnected');
-	});
-});
+require("./socket.io").init(server);

@@ -1,6 +1,6 @@
 var OAuth = require('oauth').OAuth,
 	Twitter = require('simple-twitter'),
-	User = require("./models/User");
+	User = require("../models/User");
 var Flutter = module.exports = function(opts) {
   var self = this;
 
@@ -146,7 +146,7 @@ Flutter.prototype.connect = function(req, res, next) {
 	    	res.json({ error: "Unable to set up your computer for chatting. Try again?"})
     	}
 	    self.opts.connectCallback(req, res, next);
-	    res.send('<html><head><title>Twitter Login</title><script type="text/javascript"> location.href = "https://twitter.com/oauth/authorize?oauth_token=' + token +'";</script></head><body><a href="https://twitter.com/oauth/authorize?oauth_token=' + token +'">redirecting to twitter</a></body></html>')
+      res.redirect('https://twitter.com/oauth/authorize?oauth_token=' + token)
     });
   });
 };

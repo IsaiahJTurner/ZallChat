@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
+  ObjectId = Schema.ObjectId,
+  badwords = require("../badwords");
 
 var schema = new Schema({
   text: String,
@@ -25,5 +26,22 @@ schema.pre('save', function(next) {
   }
   next();
 });
+schema.method('toJSON', function() {
+  var message = this.toObject();
+  for (i = 0; i < badwords.list.length; i++) {
+    var word = badwords.list[i];
+    if (message.text.indexOf(word) > -1) {
+      var stars = "";
+      for (ii = 0; ii < word.length; ii++) {
+        stars = stars + "*";
+        console.log(stars);
+      }
+      message.text = message.text.replace(word, stars);
+    }
+  }
+  return message;
+});
+
+
 
 module.exports = mongoose.model('Message', schema);

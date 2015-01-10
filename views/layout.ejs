@@ -1,5 +1,23 @@
 <!DOCTYPE html>
+<!--
+    Hello hackers! I imagine there are some very fun things you could do to the site, I'm not naive.
+    I would however appreciate if you did not. I can't offer a bug bounty because the budget for this
+    site is just about 0 but if you find a bug, please let me know! My email is zallchat@isaiahjturner.com
+    That will put you in touch with me directly. The site is open source. I figured that was the easiest
+    way to get bugs fixed quickly. If you're reading this you should take a look at the source, pull
+    requests are encouraged! Link: https://github.com/IsaiahJTurner/ZallChat
 
+    The site doesn't really give you access to anything as you can see from the source. So yes, in theory
+    you could take down the site via DDOS or something. Maybe you even find a security hole! But I tried
+    to keep this as safe as possible. Let me know if you find a security issue, please!!! I'm a hacker
+    just like you :) HEYYY!!! MAYBE YOU GO TO HACKATHONS????? We should team up some time. Message me
+    on Twitter @IsaiahJTurner. I'll be going to PennApps, BitCamp, and several others!
+
+    Thats all. Feel free to check up on the security but if you could refrain from black hat hacking
+    that would be great :D
+
+    I'll ask Alexis to thank anyone who find a security flaw, I wish I could offer more :/
+-->
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -9,14 +27,14 @@
     <meta name="author" content="@IsaiahJTurner">
     
     <meta name="viewport" content="width=device-width,initial-scale=1,target-densitydpi=device-dpi, user-scalable=no">
-    <link rel="canonical" href="http://zallchat.isaiah.tv/" />
+    <link rel="canonical" href="http://zallchat.com/" />
     <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <link rel="icon" type="image/ico" href="/img/favicon.ico">
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="<%= page %> - <%= settings.title.value %>" />
     <meta property="og:description" content="<%= settings.description.value %>" />
-    <meta property="og:url" content="http://zallchat.isaiah.tv/" />
+    <meta property="og:url" content="http://zallchat.com/" />
     <meta property="og:site_name" content="<%= settings.title.value %>" />
     <meta property="article:publisher" content="https://www.youtube.com/AlexisGZall" />
     <link rel="apple-touch-icon" href="/img/icon.png">
@@ -25,20 +43,7 @@
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function(){
-    if (("standalone" in window.navigator) && window.navigator.standalone) {
-      // For iOS Apps
-      $('a').on('click', function(e){
-        e.preventDefault();
-        var new_location = $(this).attr('href');
-        if (new_location != undefined && new_location.substr(0, 1) != '#' && $(this).attr('data-method') == undefined && $(this).attr('target') != "_blank"){
-          window.location = new_location;
-        }
-      });
-    }
-  });
-  </script>
+    <script src="js/script.js"></script>
     <!--[if lt IE 9]>
     	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
