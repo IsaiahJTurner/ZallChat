@@ -36,12 +36,7 @@ app.use(bodyParser.urlencoded({
 app.use(expressLayouts);
 app.use(cookieParser());
 app.use(express.logger('dev'))
-app.use(sass({
-	src: __dirname + '/public/sass',
-	dest: __dirname + '/public/css',
-	prefix: '/css',
-	debug: true
-}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
 	res.header("X-powered-by", "@IsaiahJTurner")
