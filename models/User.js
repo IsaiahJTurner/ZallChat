@@ -11,6 +11,7 @@ var schema = new Schema({
   chatting: { type: Boolean, default: false },
   owner: { type: Boolean, default: false },
   online: { type: Boolean, default: false },
+  last_seen: { type: Date, required: true, default: Date.now },
   admin: { type: Boolean, default: false },
   oauthAccessToken: String,
   oauthAccessTokenSecret: String,
@@ -25,6 +26,7 @@ var schema = new Schema({
 schema.pre('save', function(next) {
   now = new Date();
   this.updated_at = now;
+  this.last_seen = now;
   if (!this.created_at) {
     this.created_at = now;
   }
