@@ -161,7 +161,7 @@ $('#reader').scroll(function() {
 });
 
 function insertUser(user) {
-  var userHTML = $('<div class="user animated flash"><a target="_blank" class="profile-link"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
+  var userHTML = $('<div class="user animated flash"><a target="_blank" class="profile-link"><img data-id="" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
   userHTML.attr("id", user._id);
   if ("@" + user.username == $("#username").html() && !user.owner)
     userHTML.addClass("me");
