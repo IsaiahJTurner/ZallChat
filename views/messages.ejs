@@ -51,7 +51,7 @@
 			</div>
 		</div>
 		<div class="users">
-			<div class="section chatting" ondrop="drop(event)" ondragover="allowDrop(event)"><%= settings.chattinglabel.value %></div>
+			<div class="section chatting" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="title"><%= settings.chattinglabel.value %></div></div>
 			<div id="chatting">
 				<% if (session._user.chatting && !session._user.owner) { %>
 				<div class="user me" id="<%= session._user._id %>">
@@ -75,7 +75,7 @@ ondragstart="drag(event)" class="profile" src="<%= user.profile %>"></a>
 	  			<% }); %>
 	  			<!-- users will go here -->
 			</div>
-			<div class="section visiting" ondrop="drop(event)" ondragover="allowDrop(event)"><%= settings.visitinglabel.value %></div>
+			<div class="section visiting" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="title"><%= settings.visitinglabel.value %></div></div>
 			<div id="visiting">
 				<% if (!session._user.chatting && !session._user.owner) { %>
 				<div class="user me" id="<%= session._user._id %>">

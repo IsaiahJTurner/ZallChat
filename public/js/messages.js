@@ -121,7 +121,6 @@ socket.on("new message", function(message) {
 var isLoadingOldMessages;
 $("time").timeago();
 $('#reader').scroll(function() {
-  console.log("l");
   if (!$("#loading").is(":visible")) return; // if there isnt a loading indicator, dont load data
   if ($('#reader').scrollTop() < 160) {
     if (isLoadingOldMessages) return;
@@ -154,7 +153,8 @@ $('#reader').scroll(function() {
       error: function(jqXHR, textStatus, errorThrown) {
         // reload. unable to fetch old messages.
         console.log(errorThrown);
-        alert("Erorr getting messages. Try refreshing.");
+        alert("Erorr getting messages. Refreshing.");
+        location.reload();
       }
     });
   }

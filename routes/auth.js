@@ -1,6 +1,9 @@
 var OAuth = require('oauth').OAuth,
 	Twitter = require('simple-twitter'),
-	User = require("../models/User");
+	User = require("../models/User"),
+  needle = require("needle"),
+  s3 = require("s3");
+
 var Flutter = module.exports = function(opts) {
   var self = this;
 
@@ -51,8 +54,10 @@ var Flutter = module.exports = function(opts) {
 				if (err) return res.send("Error looking up username.");
 				console.log(data.screen_name);
 				if (!user) {
+
+          //needle.get(POFILE IMAGE THIS IS WHERE I LEFT OFF)
 					var user = new User({
-						profile: data.profile_image_url_https,
+						profile_url: data.profile_image_url_https,
 						name: data.name,
 						username: data.screen_name,
 						twitterID: data.id,

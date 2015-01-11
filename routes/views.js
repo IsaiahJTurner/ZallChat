@@ -14,6 +14,8 @@ exports.messages = function(req, res) {
 		$or: [{
 			online: true
 		}, {
+			online: false
+		}, {
 			owner: true
 		}, {
 			chatting: true
@@ -24,12 +26,10 @@ exports.messages = function(req, res) {
 			return res.send("Unable to get chat owners.");
 		}
 		var visiting = new Array();
-			var chatting = new Array();
-			var owner = new Array();
+		var chatting = new Array();
+		var owner = new Array();
 		for (i = 0; i < users.length; i++) {
 			var user = users[i];
-			console.log(user._id)
-			
 
 			if (user.owner == false && user.chatting == false)
 				visiting.push(user);
@@ -38,7 +38,13 @@ exports.messages = function(req, res) {
 			else
 				chatting.push(user);
 		}
-		Message.find().sort({
+		Message.find({
+			$or: [{
+				deleted: null
+			}, {
+				deleted: false
+			}]
+		}).sort({
 			created_at: -1
 		}).limit(50).populate("_user").exec(function(err, messages) {
 			if (err) {

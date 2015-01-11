@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
 var schema = new Schema({
   name: String,
   profile: String,
+  profile_url: String,
   username: String,
   socket: String,
   twitterID: Number,

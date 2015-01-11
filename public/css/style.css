@@ -32,10 +32,10 @@ a {
 	padding-top: 50px;
 	background: url('../img/background-top.jpg') no-repeat center center fixed;
 	height: 130px;
-display: block;
-top: 0;
-position: absolute;
-width: 100%;
+	display: block;
+	top: 0;
+	position: absolute;
+	width: 100%;
 }
 #home .bottom {
 	background: url('../img/background-bottom.jpg') no-repeat center center fixed;
@@ -47,7 +47,7 @@ width: 100%;
 	height: 100%;
 	padding-top: 90px;
 }
-.end {
+#home .end {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
@@ -60,24 +60,24 @@ width: 100%;
   -o-background-size: cover;
   background-size: cover;
 }
-.title {
+#home .title {
 	font-size: 100px;
 	text-align: center;
 	font-family: 'Edo', Arial, sans-serif;
 	margin-top: 60px;
 	position: absolute;
-z-index: 9;
-width: 100%;
-top: 55px;
+	z-index: 9;
+	width: 100%;
+	top: 55px;
 }
-.description {
+#home .description {
 	font-size: 30px;
 	width: 600px;
 	margin-left: auto;
   margin-right: auto;
   text-align: center;
 }
-.login {
+#home .login {
 	margin-top: 35px;
 	text-align: center;
 	width: 100%;
@@ -91,12 +91,12 @@ top: 55px;
 	padding: 15px 50px;
 	border-radius: 9px;
 }
-.skip {
+#home .skip {
 	text-align: center;
 	display: block;
 	margin-top: 20px;
 }
-.skip span.link {
+#home .skip span.link {
 	text-decoration: underline;
 }
 /*
@@ -126,7 +126,7 @@ header {
 }
 header .logo {
 	display: inline-block;
-	font-family: HelveticaNeue-Medium, 'Open Sans', sans-serif;
+	font-family: 'Edo', Arial, sans-serif;
 	font-size: 50px;
 	position: absolute;
 	left: 13px;
@@ -263,9 +263,13 @@ header .me #profile {
 #content .users {
 	width: 280px;
 	float: right;
-	background: white;
 	overflow-y: scroll;
 }
+#content .users::-webkit-scrollbar {
+    width: 0;
+}
+
+
 /*
 	Tiny screens version!
 */
@@ -329,9 +333,28 @@ header .me #profile {
 	background: #7BC8FF;
 	padding: 10px;
 	font-size: 20px
+	-webkit-transform: skew(-10deg); 
+  -moz-transform: skew(-10deg); 
+  transform: skew(-10deg);
+  background: #F0FD37;
+	margin: 0 3px;
+	text-align: center;
+	color: black;
+	text-transform: uppercase;
+	font-weight: 700;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	font-size: 18px;
+	padding: 5px;
 }
-#content .users .section.visiting {
-	background: #FAADFF;
+#content .users .section .title {
+	-webkit-transform: skew(10deg); 
+  -moz-transform: skew(10deg); 
+  transform: skew(10deg);
+}
+#visiting, #chatting {
+	background: white;
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 }
 #content .users .user .profile {
 	border-radius: 5px;
