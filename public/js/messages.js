@@ -161,13 +161,12 @@ $('#reader').scroll(function() {
 });
 
 function insertUser(user) {
-  var userHTML = $('<div class="user animated flash"><a target="_blank" class="profile-link"><img data-id="" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
-  userHTML.attr("id", user._id);
+  var userHTML = $('<div class="user animated flash" id="' + user._id + '""><a target="_blank" class="profile-link"><img data-id="' + user._id + '" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
   if ("@" + user.username == $("#username").html() && !user.owner)
     userHTML.addClass("me");
   else if (user.owner)
     userHTML.addClass("owner")
-  userHTML.find(".profile").attr("src", user.profile).attr("data-id", user._id);
+  userHTML.find(".profile").attr("src", user.profile);
   userHTML.find(".profile-link").attr("href", "https://twitter.com/" + user.username);
   userHTML.find(".name").attr("href", "https://twitter.com/" + user.username);
   userHTML.find(".real-name").text(user.name);
