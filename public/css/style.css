@@ -10,21 +10,65 @@ a {
 	color: inherit;
 	text-decoration: none;
 }
+@font-face {
+    font-family: 'edoregular';
+    src: url('../font/edo/edo-webfont.eot');
+    src: url('../font/edo/edo-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/edo/edo-webfont.woff') format('woff'),
+         url('../font/edo/edo-webfont.ttf') format('truetype'),
+         url('../font/edo/edo-webfont.svg#edoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
 #home {
 	color: white;
-	background: url('../img/background.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
+	margin: 0;
+	padding: 0;
+	font-family: HelveticaNeue-Light, 'Open Sans', sans-serif;
+}
+
+#home .top {
+	padding-top: 50px;
+	background: url('../img/background-top.jpg') no-repeat center center fixed;
+	height: 130px;
+display: block;
+top: 0;
+position: absolute;
+width: 100%;
+}
+#home .bottom {
+	background: url('../img/background-bottom.jpg') no-repeat center center fixed;
+	padding-bottom: 100px;
+	position: absolute;
+	bottom: 0;
+	top: 173px;
+	width: 100%;
+	height: 100%;
+	padding-top: 90px;
+}
+.end {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	margin-bottom: 10px;
+}
+#home .top, #home .bottom {
+	-webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-	margin-top: 50px;
-	margin-bottom: 100px;
-	font-family: HelveticaNeue-Light, 'Open Sans', sans-serif;
 }
 .title {
 	font-size: 100px;
 	text-align: center;
-	font-family: HelveticaNeue-Medium, 'Open Sans', sans-serif;
+	font-family: 'Edo', Arial, sans-serif;
+	margin-top: 60px;
+	position: absolute;
+z-index: 9;
+width: 100%;
+top: 55px;
 }
 .description {
 	font-size: 30px;
@@ -72,7 +116,7 @@ a {
 	font-family: HelveticaNeue-Light, 'Open Sans', sans-serif;
 }
 header {
-	background: rgba(255,178,178,0.95);
+	background: rgba(0,0,0,0.50);
 	color: white;
 	height: 70px;
 	position: fixed;
@@ -127,6 +171,7 @@ header .me #profile {
 #content .messages {
 	margin-top: 70px;
 	max-width: 700px;
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 }
 #content .messages #reader {
 	background: white;
@@ -162,13 +207,13 @@ header .me #profile {
 	display: inline-block;
 }
 #content .messages #reader .message .main-content .name.me {
-	color: #88CDFF;
+	color: #6AB2FF;
 }
 #content .messages #reader .message .main-content .name.owner {
-	color: #FF98E6;
+	color: #F239BC;
 }
 #content .messages #reader .message .main-content .name.visitor {
-	color: #B0B0B0;
+	color: #6869DE;
 }
 
 #content .messages #reader .message .main-content .time {
@@ -183,9 +228,10 @@ header .me #profile {
 	display: block;
 }
 #content .messages #bar {
-	background: #FEB4B5;
+	background: #E13A6A;
 	padding: 10px;
 	text-align: right;
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 }
 #content .messages #bar .input {
 	overflow: hidden;
@@ -193,7 +239,7 @@ header .me #profile {
 }
 #content .messages #bar .input input {
 	background: #FFFFFF;
-	border: 1px solid #FB6E66;
+	border: 1px solid #CC2B4B;
 	border-radius: 3px;
 	padding: 10px;
 	font-size: 20px;
@@ -203,8 +249,8 @@ header .me #profile {
 }
 
 #content .messages #bar button {
-	background: #FF8780;
-	border: 1px solid #FB6E66;
+	background: #D5254A;
+	border: 1px solid #CC2B4B;
 	border-radius: 3px;
 	color: white;
 	padding: 10px 25px;
@@ -212,6 +258,7 @@ header .me #profile {
 	float: right;
 	width: 99px;
 	outline: none!important;
+	cursor: pointer;
 }
 #content .users {
 	width: 280px;
@@ -303,14 +350,14 @@ header .me #profile {
 	margin-left: 75px;
 }
 #content .users #chatting .user.me .name {
-	color: #88CDFF;
+	color: #6AB2FF;
 }
 
 #content .users #chatting .user.owner .name {
-	color: #FF98E6;
+	color: #F239BC;
 }
 #content .users #visiting .user .name {
-	color: #B0B0B0;
+	color: #6869DE;
 }
 #content .users .user .status {
 	border-radius: 50%;
@@ -645,3 +692,7 @@ header .me #profile {
 		box-shadow: none;
 	}
 }
+
+.fixfixed { 
+    position: absolute; 
+} 

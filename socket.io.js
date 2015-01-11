@@ -31,13 +31,13 @@ io.set('transports', [
     io.on('connection', function(socket) {
       var cookies = cookie.parse(socket.handshake.headers['cookie']);
       if (!cookies || !cookies.sid) {
-        return socket.disconnect('unauthorized');
+        return console.log('unauthorized');
       } else {
         Session.findOne({
           sid: cookies.sid
         }).populate('_user').exec(function(err, session) {
           if (!session || err || !session._user) {
-            return socket.disconnect('unauthorized');
+            return console.log('unauthorized');
           } else {
             if (!session._user.online) {
               session._user.online = true;
@@ -61,8 +61,9 @@ io.set('transports', [
                   io.sockets.emit('update user', user);
                else
                   io.sockets.emit('add user', user);
-                console.log((session._user.chatting) ? 1 : 0, session._user.chatting);
-                redisClient.set("user:" + session._user._id, (session._user.chatting) ? 0 : 1); // 1 = chatting; 0 = visitor
+                console.log((session._user.chatting) ? 1 : 0);
+                console.log(session._user.chatting);
+                redisClient.set("user:" + session._user._id, (session._user.chatting) ? 1 : 0); // 1 = chatting; 0 = visitor
 
               });
             }

@@ -11,7 +11,9 @@ var ping = function() {
 };
 ping();
 
-var socket = io({ transports: ['websocket'] }); // we use this everywhere so might as well put it at the top
+var socket = io({
+  transports: ['websocket']
+}); // we use this everywhere so might as well put it at the top
 
 /*
 
@@ -27,6 +29,9 @@ function newMessage(name, profile, text) {
       icon: profile,
       body: text
     });
+    setTimeout(function(){
+    notification.close();
+}, 3000); 
   } else if (Notification.permission !== 'denied') {
     Notification.requestPermission(function(permission) {
 
@@ -39,6 +44,9 @@ function newMessage(name, profile, text) {
           icon: profile,
           body: text
         });
+        setTimeout(function(){
+    notification.close();
+}, 3000); 
       }
     });
   }
@@ -57,8 +65,12 @@ window.setInterval(refreshDocHeight, 200);
   Keeps the chat scrolled to the bottom.
 
 */
-var $cont = $('#content .messages #reader');
+if (Modernizr.touch)
+  var $cont = $(document);
+else
+  var $cont = $('#content .messages #reader');
 $cont[0].scrollTop = $cont[0].scrollHeight;
+
 $('#message-input').keyup(function(e) {
   if (e.keyCode == 13) {
     sendMessage();
@@ -83,7 +95,7 @@ function sendMessage() {
 }
 
 function renderMessageHTML(message) {
-  var messageHTML = $('<div class="message"><a target="_blank" class="profileLink"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><div class="main-content"><a class="name" href="#" target="_blank"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
+  var messageHTML = $('<div class="message animated fadeIn"><a target="_blank" class="profileLink"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><div class="main-content"><a class="name" href="#" target="_blank"></a><time is="relative-time" datetime="" class="time"></time><div class="message"></div></div></div>');
   messageHTML.attr("id", message._id);
   messageHTML.find(".profile").attr("src", message._user.profile).attr("data-id", message._user._id);;
   messageHTML.find(".profileLink").attr("href", "https://twitter.com/" + message._user.username);
@@ -104,9 +116,8 @@ socket.on("new message", function(message) {
   if ("@" + message._user.username != $("#username").html())
     newMessage(message._user.name, message._user.profile, message.text);
   $("#reader").append(messageHTML);
-  $cont[0].scrollTop = $cont[0].scrollHeight;
+  location.href = "#" + message._id;
 });
-$cont[0].scrollTop = $cont[0].scrollHeight;
 var isLoadingOldMessages;
 $("time").timeago();
 $('#reader').scroll(function() {
@@ -150,7 +161,7 @@ $('#reader').scroll(function() {
 });
 
 function insertUser(user) {
-  var userHTML = $('<div class="user"><a target="_blank" class="profile-link"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
+  var userHTML = $('<div class="user animated flash"><a target="_blank" class="profile-link"><img draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
   userHTML.attr("id", user._id);
   if ("@" + user.username == $("#username").html() && !user.owner)
     userHTML.addClass("me");
@@ -164,8 +175,6 @@ function insertUser(user) {
     userHTML.find(".status").addClass("online");
   else
     userHTML.find(".status").addClass("offline");
-  if (user.chatting == false)
-    $('<style>#content .messages #reader .message._' + user._id + ' .main-content .name { color: #B0B0B0; }</style>').appendTo('body');
   $("#reader .message._ .name" + ' + user._id + ').css("color", "");
   if (user.owner) {
     if ($("#chatting").find(".user.me").length > 0)
@@ -200,15 +209,18 @@ socket.on('update user', function(user) {
       }
     }
   }
+  $("#" + user._id).remove();
+  insertUser(user)
+
   $("._" + user._id).find(".name").removeClass("me owner visitor");
   console.log(user.chatting);
   if (user.chatting == false)
     $("._" + user._id).find(".name").addClass("visitor");
   else if (user.owner)
     $("._" + user._id).find(".name").addClass("owner");
-  $("#" + user._id).remove();
-  insertUser(user)
-});
+  else if ("@" + user.username == $("#username").html())
+    $("._" + user._id).find(".name").addClass("me");
+  });
 socket.on('add user', function(user) {
   $("#" + user._id).remove();
   insertUser(user)
@@ -218,6 +230,11 @@ socket.on('remove user', function(user) {
 });
 socket.on('notify', function(error) {
   if (error.code < 0) return console.log(error);
+  if (error.code == 1) {
+    $("#message-input").blur();
+    $("#message-input").val(lastMessage);
+    lastMessage = "";
+  }
   alert(error.message);
   if (error.redirect)
     window.location.href = error.redirect;
@@ -240,6 +257,6 @@ function drag(e) {
 function drop(e) {
   e.preventDefault();
   var user_id = e.dataTransfer.getData("user_id");
-  if(user_id.length < 1) return console.log(user_id);
+  if (user_id.length < 1) return console.log(user_id);
   socket.emit('toggle chatting', user_id);
 }
