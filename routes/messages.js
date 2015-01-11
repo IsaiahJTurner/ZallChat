@@ -46,9 +46,11 @@ exports.get = function(req, res) {
         chatting: message._user.chatting,
         owner: message._user.owner,
         online: message._user.online
+        _id: message._user._id
       }
       var messageStripped = {
         text: message.text,
+        _id: message._id,
         _user: userStripped
       }
       for (i = 0; i < badwords.list.length; i++) {

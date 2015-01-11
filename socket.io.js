@@ -56,7 +56,8 @@ var exports = module.exports = {
             username: user.username,
             chatting: user.chatting,
             owner: user.owner,
-            online: user.online
+            online: user.online,
+            _id: user._id
           }
           if (err) {
             console.log(err);
@@ -86,7 +87,8 @@ var exports = module.exports = {
                 username: user.username,
                 chatting: user.chatting,
                 owner: user.owner,
-                online: user.online
+                online: user.online,
+                _id: user._id
               }
               redisClient.get("user:" + session._user._id, function(err, reply) {
                 if (reply == 1) io.sockets.emit('update user', userStripped);
@@ -137,7 +139,8 @@ var exports = module.exports = {
                   username: user.username,
                   chatting: user.chatting,
                   owner: user.owner,
-                  online: user.online
+                  online: user.online,
+                  _id: user._id
                 }
                 io.sockets.emit('update user', user);
               });
@@ -206,11 +209,13 @@ var exports = module.exports = {
                   username: message._user.username,
                   chatting: message._user.chatting,
                   owner: message._user.owner,
-                  online: message._user.online
+                  online: message._user.online,
+                  _id: message._user._id
                 }
                 var messageStripped = {
                   text: message.text,
-                  _user: userStripped
+                  _user: userStripped,
+                  _id: message._id
                 }
                 io.sockets.emit('new message', messageStripped);
               });
