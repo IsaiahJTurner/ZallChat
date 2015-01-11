@@ -45,7 +45,7 @@ exports.get = function(req, res) {
         username: message._user.username,
         chatting: message._user.chatting,
         owner: message._user.owner,
-        online: message._user.online
+        online: message._user.online,
         _id: message._user._id
       }
       var messageStripped = {
