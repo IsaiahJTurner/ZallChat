@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 
 var schema = new Schema({
   text: String,
+  image: String,
   _user: {
     type: ObjectId,
     ref: 'User'

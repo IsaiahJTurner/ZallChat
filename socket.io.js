@@ -43,16 +43,22 @@ var exports = module.exports = {
           session._user.online = true;
           console.log(session._user.socket);
           console.log(socket.id);
+          /*  this is strange code. my original idea was that you could only be logged
+              in to one place at a time because otherwise there are "status": 
+              online issues but i gave up. this is a bug. if someone knows a fix to disconnect
+              a client by it's id let me know. it has to work over redis is the main issue.
+              the hacky fix i use is in the client js. if the client is marked as offline
+              it sends a ping to fix it. shit fix but it works.
+          */
           if (session._user.socket) {
-            console.log("s");
-            socket.broadcast.to(session._user.socket).disconnect('logged in somewhere else');
+            //socket.broadcast.to(session._user.socket).disconnect('logged in somewhere else');
           }
         }
         session._user.socket = socket.id;
         session._user.save(function(err, user) {
           var userStripped = {
             name: user.name,
-            profile: user.profile,
+            profile: user.profile.substr(user.profile.lastIndexOf(".") + 1),
             username: user.username,
             chatting: user.chatting,
             owner: user.owner,
@@ -83,7 +89,7 @@ var exports = module.exports = {
               }
               var userStripped = {
                 name: user.name,
-                profile: user.profile,
+                profile: user.profile.substr(user.profile.lastIndexOf(".") + 1),
                 username: user.username,
                 chatting: user.chatting,
                 owner: user.owner,
@@ -135,7 +141,7 @@ var exports = module.exports = {
                 }
                 var userStripped = {
                   name: user.name,
-                  profile: user.profile,
+                  profile: user.profile.substr(user.profile.lastIndexOf(".") + 1),
                   username: user.username,
                   chatting: user.chatting,
                   owner: user.owner,
@@ -147,7 +153,7 @@ var exports = module.exports = {
             });
           }
         });
-        socket.on('send message', function(text) {
+        socket.on('send message', function(data) {
           redisClient.get("user:" + session._user._id, function(err, reply) {
             console.log(reply);
             if (reply != 1) // if not chatting
@@ -160,7 +166,7 @@ var exports = module.exports = {
 
             for (i = 0; i < badwords.list.length; i++) {
               var word = badwords.list[i];
-              if (text.indexOf(word) > -1) {
+              if (data["text"].indexOf(word) > -1) {
                 socket.emit('notify', {
                   message: "Woah there! Let's try to think of a nicer word than " + word + ".",
                   code: 2
@@ -173,8 +179,10 @@ var exports = module.exports = {
 
             var message = new Message({
               _user: session._user,
-              text: text
+              text: data["text"]
             });
+            if (session._user.admin || session._user.owner)
+              message["image"] = data["image"];
             message.save(function(err, message) {
               if (err) {
                 return socket.emit("notify", {
@@ -205,7 +213,7 @@ var exports = module.exports = {
                 }
                 var userStripped = {
                   name: message._user.name,
-                  profile: message._user.profile,
+                  profile: message._user.profile.substr(message._user.profile.lastIndexOf(".") + 1),
                   username: message._user.username,
                   chatting: message._user.chatting,
                   owner: message._user.owner,
@@ -215,8 +223,11 @@ var exports = module.exports = {
                 var messageStripped = {
                   text: message.text,
                   _user: userStripped,
-                  _id: message._id
+                  _id: message._id,
+                  created_at: message.created_at
                 }
+                if (message.image)
+                  messageStripped.image = message.image;
                 io.sockets.emit('new message', messageStripped);
               });
             });

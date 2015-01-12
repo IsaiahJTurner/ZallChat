@@ -227,27 +227,63 @@ header .me #profile {
 	color: #868686;
 	display: block;
 }
+#content .messages #reader .message .main-content .message img {
+	max-width: 100%;
+	max-height: 320px;
+	display: block;
+	margin-bottom: 15px;
+}
 #content .messages #bar {
 	background: #E13A6A;
 	padding: 10px;
 	text-align: right;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 }
+#content .messages #bar #message-form {
+	margin-bottom: -22px;
+
+}
 #content .messages #bar .input {
 	overflow: hidden;
-	padding-right: 32px;
+	padding-right: 70px;
 }
-#content .messages #bar .input input {
+#content .messages #bar #send-button:disabled {
+	cursor: default;
+}
+#content .messages #bar .input input[type=text] {
 	background: #FFFFFF;
 	border: 1px solid #CC2B4B;
 	border-radius: 3px;
 	padding: 10px;
 	font-size: 20px;
+	padding-right: 49px;
 	color: rgba(96, 67, 67, 1);
 	width: 100%;
 	outline: none;
 }
-
+#content .messages #bar .input .upload-image {
+	overflow: visible;
+	position: relative;
+	float: right;
+	cursor: pointer;
+	max-height: 25px;
+	max-width: 31px;
+	margin-top: -35px;
+	margin-right: -50px;
+	display: none; /* inline css changes this */
+}
+#content .messages #bar .input .upload-image.disabled {
+	-webkit-filter: grayscale(100%);
+	-moz-filter: grayscale(100%);
+	filter: grayscale(100%);
+	cursor: default;
+}
+#message-file {
+	opacity: 0;
+}
+#message-file:disabled {
+	background: rgba(240, 223, 223, 1)
+}
 #content .messages #bar button {
 	background: #D5254A;
 	border: 1px solid #CC2B4B;
@@ -273,11 +309,17 @@ header .me #profile {
 /*
 	Tiny screens version!
 */
+@media screen and (min-width: 1000px) {
+	#messages {
+		overflow: hidden;
+	}
+}
+
 @media screen and (max-width: 999px) {
 	header {
 		height: 40px;
 	}
-	button {
+	#message-form button {
 		margin-right: 20px;
 	}
 	header .logo {
@@ -305,6 +347,7 @@ header .me #profile {
 		height: 100%!important;
 		width: 100%;
 		overflow: hidden;
+		margin-bottom: 0;
 		max-width: 100%;
 	}
 	#reader {

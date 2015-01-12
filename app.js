@@ -1,6 +1,8 @@
 /*
  * Module dependencies
  */
+if (!process.env.MONGOURL)
+	require("./config");
 var express = require('express'),
 	ejs = require('ejs'),
 	expressLayouts = require("express-ejs-layouts"),
@@ -14,9 +16,9 @@ var express = require('express'),
 	User = require("./models/User"),
 	Setting = require("./models/Setting"),
 	Flutter = require('./routes/auth'),
-	uuid = require('node-uuid');
-if (!process.env.MONGOURL)
-	require("./config");
+	uuid = require('node-uuid'),
+	multer  = require('multer')
+
 fs.readdirSync("./routes").forEach(function(file) {
 	require("./routes/" + file);
 });
@@ -30,12 +32,13 @@ var app = express()
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views')
 app.use(bodyParser.json());
+app.use(multer({ dest: './tmp/'}))
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(expressLayouts);
 app.use(cookieParser());
-app.use(express.logger('dev'))
+// app.use(express.logger('tiny'))
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
@@ -45,6 +48,8 @@ app.use(function(req, res, next) {
 
 var minutes = 5,
 	the_interval = minutes * 60 * 1000;
+console.log("Error: the next mongo should be a find and set (not update) and should then emit the update to all clients.")
+
 var setInactiveUsersOffline = function() {
 	var time = new Date();
 	time.setMinutes(time.setMinutes() - 25); // there is an inacuracy of 30 minutes if the server crashes, unfortunatly
@@ -145,6 +150,7 @@ app.get('/messages', routes.views.messages);
 app.get('/settings', routes.views.settings);
 
 app.post('/api/1.0/ping', routes.chat.ping);
+app.post('/api/1.0/upload', routes.chat.upload);
 app.get('/api/1.0/messages', routes.messages.get);
 
 // deprecated method implementations

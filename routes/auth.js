@@ -1,9 +1,23 @@
 var OAuth = require('oauth').OAuth,
-	Twitter = require('simple-twitter'),
-	User = require("../models/User"),
+  Twitter = require('simple-twitter'),
+  User = require("../models/User"),
   needle = require("needle"),
-  s3 = require("s3");
+  s3 = require("s3"),
+  fs = require("fs"),
+  path = require("path"),
+  temp_dir = path.join(process.cwd(), '../tmp/');
 
+var s3Client = s3.createClient({
+  maxAsyncS3: 20, // this is the default
+  s3RetryCount: 3, // this is the default
+  s3RetryDelay: 1000, // this is the default
+  multipartUploadThreshold: 20971520, // this is the default (20 MB)
+  multipartUploadSize: 15728640, // this is the default (15 MB)
+  s3Options: {
+    accessKeyId: process.env.AWS_KEY,
+    secretAccessKey: process.env.AWS_SECRET
+  },
+});
 var Flutter = module.exports = function(opts) {
   var self = this;
 
@@ -30,78 +44,107 @@ var Flutter = module.exports = function(opts) {
       }
     },
     authCallback: function(req, res, next) {
-		if (req.error) {
-			console.log(req.error);
-			res.send(req.error);
-			return;
-		}
-		twitter = new Twitter(process.env.TWITTER_KEY, process.env.TWITTER_SECRET, req.session.oauthAccessToken, req.session.oauthAccessTokenSecret, 0);
-		twitter.get('account/verify_credentials', function(err, data) {
-		if (typeof data === 'string') {
-				data = JSON.parse(data);
-			}
-			if (err != null && err != undefined) {
-				console.log("Verification error.");
-				console.log(err);
-				console.log(data);
-				return res.send("Unable to get your information from Twitter.");
-			}
-			console.log(data);
-			
-			User.findOne({
-				username: data.screen_name
-			}, function(err, user) {
-				if (err) return res.send("Error looking up username.");
-				console.log(data.screen_name);
-				if (!user) {
+      if (req.error) {
+        console.log(req.error);
+        res.send(req.error);
+        return;
+      }
+      twitter = new Twitter(process.env.TWITTER_KEY, process.env.TWITTER_SECRET, req.session.oauthAccessToken, req.session.oauthAccessTokenSecret, 0);
+      twitter.get('account/verify_credentials', function(err, data) {
+        if (typeof data === 'string') {
+          data = JSON.parse(data);
+        }
+        if (err != null && err != undefined) {
+          console.log("Verification error.");
+          console.log(err);
+          console.log(data);
+          return res.send("Unable to get your information from Twitter.");
+        }
 
-          //needle.get(POFILE IMAGE THIS IS WHERE I LEFT OFF)
-					var user = new User({
-						profile_url: data.profile_image_url_https,
-						name: data.name,
-						username: data.screen_name,
-						twitterID: data.id,
-						oauthAccessToken: req.session.oauthAccessToken,
-						oauthAccessTokenSecret: req.session.oauthAccessTokenSecret
-					});
-					user.save(function(err, user) {
-						if (err) {
-							res.send("Unable to create your account.")
-						}
-						req.session._user = user;
-						req.session.save(function(err, session) {
-							if (err) {
-								console.log(err);
-								return res.send("Unable to link your twitter to your computer.");
-							}
-							res.redirect('/messages');
-						})
-					});
-				} else {
-					user.profile = data.profile_image_url_https;
-					user.name = data.name;
-					user.oauthAccessToken = req.session.oauthAccessToken,
-					user.oauthAccessTokenSecret = req.session.oauthAccessTokenSecret;
-					user.username = data.screen_name;
-					user.twitterID = data.id;
-					user.save(function(err, user) {
-						if (err) {
-							console.log(err);
-							return res.send("Unable to update your profile with your new Twitter information.");
-						}
-						req.session._user = user;
-						req.session.save(function(err, session) {
-							if (err) {
-								console.log(err);
-								return res.send("Unable to link your twitter to your computer.");
-							}
-							res.redirect('/messages');
-						})
-					})
-				} 
-			});
-		});
-	}
+        User.findOne({
+          twitterID: data.id
+        }, function(err, user) {
+          if (err) return res.send("Error looking up username.");
+          data.profile_image_url_https = data.profile_image_url_https.replace('normal', 'bigger');
+          if (data.profile_image_url_https != user.profile) {
+            if (!fs.existsSync(temp_dir))
+              fs.mkdirSync(temp_dir);
+            needle.get(data.profile_image_url_https, {
+              output: temp_dir + user._id,
+              follow: true
+            }, function(error, response, imageData) {
+              if (error)
+                return console.log(error, response, imageData, "error downloading " + data.profile_image_url_https);
+
+              var params = {
+                localFile: temp_dir + user._id,
+
+                s3Params: {
+                  Bucket: "zallchat-profile-pictures",
+                  Key: user._id + "." + data.profile_image_url_https.substr(data.profile_image_url_https.lastIndexOf(".") + 1)
+                },
+              };
+              var uploader = s3Client.uploadFile(params);
+              uploader.on('error', function(err) {
+                console.error("unable to upload:", err.stack);
+              });
+              uploader.on('progress', function() {
+                console.log("progress", uploader.progressMd5Amount,
+                  uploader.progressAmount, uploader.progressTotal);
+              });
+              uploader.on('end', function() {
+                console.log("done uploading");
+              });
+
+            });
+          }
+          if (!user) {
+            var user = new User({
+              profile: data.profile_image_url_https,
+              name: data.name,
+              username: data.screen_name,
+              twitterID: data.id,
+              oauthAccessToken: req.session.oauthAccessToken,
+              oauthAccessTokenSecret: req.session.oauthAccessTokenSecret
+            });
+            user.save(function(err, user) {
+              if (err) {
+                res.send("Unable to create your account.")
+              }
+              req.session._user = user;
+              req.session.save(function(err, session) {
+                if (err) {
+                  console.log(err);
+                  return res.send("Unable to link your twitter to your computer.");
+                }
+                res.redirect('/messages');
+              })
+            });
+          } else {
+            user.profile = data.profile_image_url_https;
+            user.name = data.name;
+            user.oauthAccessToken = req.session.oauthAccessToken,
+              user.oauthAccessTokenSecret = req.session.oauthAccessTokenSecret;
+            user.username = data.screen_name;
+            user.twitterID = data.id;
+            user.save(function(err, user) {
+              if (err) {
+                console.log(err);
+                return res.send("Unable to update your profile with your new Twitter information.");
+              }
+              req.session._user = user;
+              req.session.save(function(err, session) {
+                if (err) {
+                  console.log(err);
+                  return res.send("Unable to link your twitter to your computer.");
+                }
+                res.redirect('/messages');
+              })
+            })
+          }
+        });
+      });
+    }
   }
 
   // option overrides
@@ -138,19 +181,21 @@ var Flutter = module.exports = function(opts) {
 Flutter.prototype.connect = function(req, res, next) {
   var self = this;
 
-  self.oauth.getOAuthRequestToken(function(err, token, secret){
+  self.oauth.getOAuthRequestToken(function(err, token, secret) {
     if (err) {
       req.error = err;
       return self.opts.connectCallback(req, res, next);
-    } 
+    }
 
     req.session.oauthRequestToken = token;
     req.session.oauthRequestTokenSecret = secret;
     req.session.save(function(err, session) {
-    	if (err) {
-	    	res.json({ error: "Unable to set up your computer for chatting. Try again?"})
-    	}
-	    self.opts.connectCallback(req, res, next);
+      if (err) {
+        res.json({
+          error: "Unable to set up your computer for chatting. Try again?"
+        })
+      }
+      self.opts.connectCallback(req, res, next);
       res.redirect('https://twitter.com/oauth/authorize?oauth_token=' + token)
     });
   });
@@ -158,23 +203,25 @@ Flutter.prototype.connect = function(req, res, next) {
 
 Flutter.prototype.auth = function(req, res, next) {
   var self = this;
-  
+
   self.oauth.getOAuthAccessToken(req.session.oauthRequestToken, req.session.oauthRequestTokenSecret, req.query.oauth_verifier, function(err, accessToken, accessTokenSecret, results) {
     if (err) {
       req.error = err;
       req.results = results;
-	  self.opts.authCallback(req, res, next);
+      self.opts.authCallback(req, res, next);
     } else {
 
-    req.session.oauthAccessToken = accessToken;
-    req.session.oauthAccessTokenSecret = accessTokenSecret;
-	 req.session.save(function(err, session) {
-    	if (err) {
-	    	res.json({ error: "Unable to save your login information. Try again?"})
-    	}
-	    req.results = results;
-		self.opts.authCallback(req, res, next);
-    });
+      req.session.oauthAccessToken = accessToken;
+      req.session.oauthAccessTokenSecret = accessTokenSecret;
+      req.session.save(function(err, session) {
+        if (err) {
+          res.json({
+            error: "Unable to save your login information. Try again?"
+          })
+        }
+        req.results = results;
+        self.opts.authCallback(req, res, next);
+      });
     }
   });
 };
@@ -184,11 +231,11 @@ Flutter.prototype.logout = function(req, res) {
 
   req.session.remove(function(err) {
     if (err) {
-      return res.json({ error: 'Something went wrong when trying to log out.' });
+      return res.json({
+        error: 'Something went wrong when trying to log out.'
+      });
     }
 
     res.redirect("/");
   });
 }
-
-

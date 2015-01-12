@@ -2,6 +2,15 @@ var Message = require("../models/Message"),
   badwords = require("../badwords");
 
 exports.get = function(req, res) {
+  if (typeof req.session._user === 'undefined') {
+    return res.json({
+      success: false,
+      error: {
+        code: 13,
+        message: "Not logged in."
+      }
+    });
+  }
   if (!req.param("date")) {
     return res.json({
       success: false,
@@ -41,7 +50,7 @@ exports.get = function(req, res) {
       var message = messages[i];
       var userStripped = {
         name: message._user.name,
-        profile: message._user.profile,
+        profile: message._user.profile.substr(message._user.profile.lastIndexOf(".") + 1),
         username: message._user.username,
         chatting: message._user.chatting,
         owner: message._user.owner,
@@ -51,19 +60,21 @@ exports.get = function(req, res) {
       var messageStripped = {
         text: message.text,
         _id: message._id,
-        _user: userStripped
+        _user: userStripped,
+        created_at: message.created_at
       }
-      for (i = 0; i < badwords.list.length; i++) {
+      if (message.image)
+        messageStripped.image = message.image;
+      for (ii = 0; ii < badwords.list.length; ii++) {
         var word = badwords.list[i];
         if (messageStripped.text.indexOf(word) > -1) {
           var stars = "";
-          for (ii = 0; ii < word.length; ii++) {
+          for (iii = 0; iii < word.length; iii++) {
             stars = stars + "*";
           }
           messageStripped.text = messageStripped.text.replace(word, stars);
         }
       }
-      console.log(messageStripped);
       messagesStripped.push(messageStripped);
     }
     res.json({

@@ -8,12 +8,31 @@ var schema = new Schema({
   profile_url: String,
   username: String,
   socket: String,
-  twitterID: Number,
-  chatting: { type: Boolean, default: false },
-  owner: { type: Boolean, default: false },
-  online: { type: Boolean, default: false },
-  last_seen: { type: Date, required: true, default: Date.now },
-  admin: { type: Boolean, default: false },
+  twitterID: {
+    type: Number,
+    unique: true
+  },
+  chatting: {
+    type: Boolean,
+    default: false
+  },
+  owner: {
+    type: Boolean,
+    default: false
+  },
+  online: {
+    type: Boolean,
+    default: false
+  },
+  last_seen: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  admin: {
+    type: Boolean,
+    default: false
+  },
   oauthAccessToken: String,
   oauthAccessTokenSecret: String,
   created_at: {

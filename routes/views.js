@@ -25,6 +25,9 @@ exports.messages = function(req, res) {
 			console.log(err);
 			return res.send("Unable to get chat owners.");
 		}
+		users.forEach(function(user) {
+			user.profile = user.profile.substr(user.profile.lastIndexOf(".") + 1);
+		});
 		var visiting = new Array();
 		var chatting = new Array();
 		var owner = new Array();
@@ -51,6 +54,7 @@ exports.messages = function(req, res) {
 				return res.send("Error getting old messages");
 			}
 			messages.forEach(function(message) {
+				message._user.profile = message._user.profile.substr(message._user.profile.lastIndexOf(".") + 1);
 				for (i = 0; i < badwords.list.length; i++) {
 					var word = badwords.list[i];
 					if (message.text.indexOf(word) > -1) {
