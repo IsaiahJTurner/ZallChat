@@ -245,6 +245,9 @@ header .me #profile {
 }
 #content .messages #bar .input {
 	overflow: hidden;
+	padding-right: 32px;
+}
+#content .messages #bar.admin .input {
 	padding-right: 70px;
 }
 #content .messages #bar #send-button:disabled {
@@ -256,10 +259,12 @@ header .me #profile {
 	border-radius: 3px;
 	padding: 10px;
 	font-size: 20px;
-	padding-right: 49px;
 	color: rgba(96, 67, 67, 1);
 	width: 100%;
 	outline: none;
+}
+#content .messages #bar.admin .input input[type=text] {
+	padding-right: 49px;
 }
 #content .messages #bar .input .upload-image {
 	overflow: visible;

@@ -155,8 +155,7 @@ var exports = module.exports = {
         });
         socket.on('send message', function(data) {
           redisClient.get("user:" + session._user._id, function(err, reply) {
-            console.log(reply);
-            if (reply != 1) // if not chatting
+            if (reply != 1 && !session._user.admin && !session._user.owner) // if not chatting and not an owner or admin
               return socket.emit('notify', {
               message: "Hello there beautiful person who wants to chat! Literally same because I want to hear what you have to say! I pick a few random people from Twitter to join the chat so just give me some time to get to you!",
               code: 1
@@ -174,9 +173,6 @@ var exports = module.exports = {
 
               }
             }
-
-
-
             var message = new Message({
               _user: session._user,
               text: data["text"]

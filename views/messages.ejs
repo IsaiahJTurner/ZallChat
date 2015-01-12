@@ -37,7 +37,7 @@
 					</div>
 				<% } %>
 			</div>
-			<div id="bar">
+			<div id="bar" <% if (session._user.admin || session._user.owner) { %>class="admin"<% } %>>
 				<form id="message-form">
 					<button id="send-button" type="submit">Send</button>
 					<div class="input">
@@ -46,7 +46,7 @@
 						<% } else { %>
 						<input type="text" id="message-input" placeholder="Say something...">
 						<% } %>
-						<img class="upload-image" src="/img/camera.svg" <% if (session._user.admin) { %>style="display:block;"<% } %>>
+						<img class="upload-image" src="/img/camera.svg" <% if (session._user.admin || session._user.owner) { %>style="display:block;"<% } %>>
 					<input id="message-file" type='file' accept="image/*" />
 					</div>
 				</form>
