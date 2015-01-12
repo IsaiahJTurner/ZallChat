@@ -148,7 +148,7 @@ var exports = module.exports = {
                   online: user.online,
                   _id: user._id
                 }
-                io.sockets.emit('update user', user);
+                io.sockets.emit('update user', userStripped);
               });
             });
           }

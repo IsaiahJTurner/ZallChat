@@ -282,8 +282,6 @@ socket.on('update user', function(user) {
   if ("@" + user.username == $("#username").html()) {
     if (typeof chatting === 'undefined') chatting = user.chatting;
     else if (user.chatting != chatting) {
-      console.log(user);
-
       chatting = user.chatting;
       if (chatting) {
         $("#message-input").attr("placeholder", "Say something!");
@@ -299,7 +297,6 @@ socket.on('update user', function(user) {
   insertUser(user)
 
   $("._" + user._id).find(".name").removeClass("me owner visitor");
-  console.log(user.chatting);
   if (user.chatting == false)
     $("._" + user._id).find(".name").addClass("visitor");
   else if (user.owner)
