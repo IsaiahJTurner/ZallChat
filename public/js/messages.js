@@ -141,16 +141,21 @@ function sendMessage() {
   var customHeaders = {};
   jic.upload($(".upload-image")[0], server_endpoint, server_var_name, filename, successCallback, errorCallback, duringCallback, customHeaders);
 }
-
+$(".upload-image").error(function () {
+  $("#message-file").val("");
+  $(".upload-image").attr("src", "/img/camera.svg");
+  alert("Error getting image. Try again?");
+});
 $("#message-file").change(function(evt) {
-  var tgt = evt.target || window.event.srcElement,
-    files = tgt.files;
+  var target = evt.target || window.event.srcElement,
+    file = target.files[0];
 
-  // FileReader support
-  if (FileReader && files && files.length) {
+  if (FileReader && file) {
     var fr = new FileReader();
-    fr.onload = function() {
-      $(".upload-image").attr("src", fr.result);
+    fr.onload = function(event) {
+      $(".upload-image").attr("src", event.target.result);
+      console.log(event.target.result);
+
       var source_image = $(".upload-image")[0],
         target_img = $(".upload-image")[0];
 
@@ -158,7 +163,7 @@ $("#message-file").change(function(evt) {
         output_format = 'jpg';
         $(".upload-image").attr("src", jic.compress(source_image, quality, output_format).src);
     }
-    fr.readAsDataURL(files[0]);
+    fr.readAsDataURL(file);
   } else {
 
     var error = "The file was selected but not compressed. Your location data may be included in your message. It is recommended that you do NOT send this message. This error will be desplayed 3 times.";
