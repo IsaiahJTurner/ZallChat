@@ -1,4 +1,4 @@
-<body id="messages">
+<body id="messages" class="<% if (session._user.owner) { %>owner<% } if (session._user.admin) { %>admin<% } %>">
 	<header>
 		<div class="logo">
 			<a href="/"><%= settings.headertitle.value %></a>
@@ -32,7 +32,9 @@
 						<div class="main-content">
 							<a class="name <% if (message._user.chatting == false) { %>visitor<% } else if (message._user.owner) { %>owner<% } else if (message._user.username == session._user.username) { %>me<% } %>" target="_blank" href="https://twitter.com/<%= message._user.username %>"><%= message._user.name %></a>
 							<time is="relative-time" datetime="<%= message.created_at.toISOString() %>" class="time"></time>
-							<div class="message"><% if (message.image) { %><img src="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/<%= message.image %>"><% } %> <%= message.text %></div>
+							<div class="message"><% if (message.image) { %><a class="image-light" href="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/<%= message.image %>">
+							<div src="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/<%= message.image %>"></div>
+							</a><% } %> <span class="body"><%- message.text %></span></div>
 						</div>
 					</div>
 				<% } %>
@@ -97,6 +99,7 @@ ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.co
 		</div>
 	</div>
 	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
-	<script src="js/jquery.timeago.js" type="text/javascript"></script>
 	<script src="js/JIC.js" type="text/javascript"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js?v=2.1.5"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/0.3.3/sweet-alert.min.js"></script>
 	<script src="js/messages.js"></script>

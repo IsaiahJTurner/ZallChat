@@ -26,3 +26,5 @@ SOFTWARE.
 
 #Copyright Stuff
 Icons made by [Daniel Bruce](http://www.danielbruce.se "Daniel Bruce") from [www.flaticon.com](http://www.flaticon.com "Flaticon") is licensed by [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/ "Creative Commons BY 3.0")
+
+(Font: Cocogoose family by Zetafonts -http://www.zetafonts.com/collection/308)

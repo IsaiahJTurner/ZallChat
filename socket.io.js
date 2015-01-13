@@ -8,9 +8,13 @@ var exports = module.exports = {
       Message = require('./models/Message'),
       Session = require("./models/Session"),
       User = require("./models/User"),
-      badwords = require("./badwords");
+      badwords = require("./badwords"),
+  emo = require('emojize');
+emo.base('https://github.com/ded/emojize/blob/master/sprite/')
+
     var redisAdapter = require('socket.io-redis');
-    var redis = require('redis');
+    var redis = require('redis'),
+      Autolinker = require("autolinker");
     var pub = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
     pub.auth(process.env.REDIS_PASSWORD);
     var sub = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
@@ -70,6 +74,7 @@ var exports = module.exports = {
             return socket.emit('notify', {
               message: "Unable to update your status to online.",
               code: 3,
+              type: 'error',
               redirect: "/messages"
             });
           }
@@ -115,18 +120,21 @@ var exports = module.exports = {
                 return socket.emit("notify", {
                   message: "Unable to get the user.",
                   code: 9,
-                  redirect: "/messages"
+                  redirect: "/messages",
+                  type: 'error'
                 });
               }
               if (user.owner)
                 return socket.emit("notify", {
                   message: "You can't edit the group owner.",
-                  code: 11
+                  code: 11,
+                  type: 'error'
                 });
               else if (user._id == session._user._id)
                 return socket.emit("notify", {
                   message: "You can't edit yourself.",
-                  code: 12
+                  code: 12,
+                  type: 'error'
                 });
               redisClient.set("user:" + user._id, (user.chatting) ? 0 : 1); // 1 = chatting; 0 = visitor
               user.chatting = !user.chatting;
@@ -136,7 +144,8 @@ var exports = module.exports = {
                   return socket.emit("notify", {
                     message: "Unable to get the user.",
                     code: 10,
-                    redirect: "/messages"
+                    redirect: "/messages",
+                    type: 'error'
                   });
                 }
                 var userStripped = {
@@ -158,21 +167,23 @@ var exports = module.exports = {
             if (reply != 1 && !session._user.admin && !session._user.owner) // if not chatting and not an owner or admin
               return socket.emit('notify', {
               message: "Hello there beautiful person who wants to chat! Literally same because I want to hear what you have to say! I pick a few random people from Twitter to join the chat so just give me some time to get to you!",
-              code: 1
+              code: 50,
+              type: 'warning'
+
             });
+            for (var word in badwords.bannedWords) {
+              if (Object.prototype.hasOwnProperty.call(badwords.bannedWords, word)) {
+                if (data["text"].toLowerCase().indexOf(word.toLowerCase()) > -1) {
+                  return socket.emit('notify', {
+                    message: badwords.bannedWords[word],
+                    code: 51,
+                    type: 'error'
 
-            // naughty content handling
-
-            for (i = 0; i < badwords.list.length; i++) {
-              var word = badwords.list[i];
-              if (data["text"].indexOf(word) > -1) {
-                socket.emit('notify', {
-                  message: "Woah there! Let's try to think of a nicer word than " + word + ".",
-                  code: 2
-                });
-
+                  });
+                }
               }
             }
+
             var message = new Message({
               _user: session._user,
               text: data["text"]
@@ -183,8 +194,9 @@ var exports = module.exports = {
               if (err) {
                 return socket.emit("notify", {
                   message: "Couldn't send the message.",
-                  code: 2,
-                  redirect: "/messages"
+                  code: 52,
+                  redirect: "/messages",
+                  type: 'error'
                 });
               }
               Message.populate(message, {
@@ -193,19 +205,10 @@ var exports = module.exports = {
                 if (err) {
                   return socket.emit('notify', {
                     message: "Could not get your information.",
-                    code: 2,
-                    redirect: "/messages"
+                    code: 53,
+                    redirect: "/messages",
+                    type: 'error'
                   });
-                }
-                for (i = 0; i < badwords.list.length; i++) {
-                  var word = badwords.list[i];
-                  if (message.text.indexOf(word) > -1) {
-                    var stars = "";
-                    for (ii = 0; ii < word.length; ii++) {
-                      stars = stars + "*";
-                    }
-                    message.text = message.text.replace(word, stars);
-                  }
                 }
                 var userStripped = {
                   name: message._user.name,
@@ -222,13 +225,38 @@ var exports = module.exports = {
                   _id: message._id,
                   created_at: message.created_at
                 }
+                messageStripped.text = messageStripped.text.replace(/&/g, '&amp;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#39;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+                messageStripped.text = Autolinker.link(messageStripped.text, {
+                  truncate: 25
+                });
+                for (ii = 0; ii < badwords.list.length; ii++) {
+                  var word = badwords.list[ii];
+                  if (messageStripped.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+                    socket.emit('notify', {
+                      message: "Woah there! Let's try to think of a nicer word than " + word + ".",
+                      code: 54,
+                      type: 'warning'
+                    });
+                    var stars = "";
+                    for (iii = 0; iii < word.length; iii++) {
+                      stars = stars + "*";
+                    }
+
+                    var regex = new RegExp("(" + word + ")", "gi");
+                    messageStripped.text = messageStripped.text.replace(regex, stars);
+                  }
+                }
+                message.text = emo.emojize(message.text);
                 if (message.image)
                   messageStripped.image = message.image;
                 io.sockets.emit('new message', messageStripped);
               });
             });
           });
-
         });
       });
       socket.on('disconnect', function() {

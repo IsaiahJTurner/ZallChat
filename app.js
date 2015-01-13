@@ -17,7 +17,12 @@ var express = require('express'),
 	Setting = require("./models/Setting"),
 	Flutter = require('./routes/auth'),
 	uuid = require('node-uuid'),
-	multer  = require('multer')
+	multer  = require('multer'),
+	io = require('socket.io-emitter')({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    pass: process.env.REDIS_PASSWORD
+  })
 
 fs.readdirSync("./routes").forEach(function(file) {
 	require("./routes/" + file);
@@ -140,6 +145,10 @@ app.use(function(req, res, next) {
 		next()
 	});
 });
+app.use(function(req, res, next) {
+	req.io = io;
+	next();
+});
 var flutter = new Flutter({
 	consumerKey: process.env.TWITTER_KEY,
 	consumerSecret: process.env.TWITTER_SECRET,
@@ -152,6 +161,7 @@ app.get('/settings', routes.views.settings);
 app.post('/api/1.0/ping', routes.chat.ping);
 app.post('/api/1.0/upload', routes.chat.upload);
 app.get('/api/1.0/messages', routes.messages.get);
+app.delete('/api/1.0/messages/:id', routes.messages.delete);
 
 // deprecated method implementations
 app.post('/settings', routes.settings.update);

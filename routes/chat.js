@@ -1,9 +1,4 @@
-var io = require('socket.io-emitter')({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    pass: process.env.REDIS_PASSWORD
-  }),
-  s3 = require("s3"),
+  var s3 = require("s3"),
   fs = require("fs"),
   path = require("path"),
   temp_dir = path.join(process.cwd(), '../tmp/'),
@@ -43,7 +38,7 @@ exports.ping = function(req, res) {
       online: req.session._user.online,
       _id: req.session._user._id
     }
-    io.emit('update user', userStripped);
+    req.io.emit('update user', userStripped);
   }
   req.session._user.save(function(err, user) {
     if (err) {
@@ -93,7 +88,7 @@ exports.upload = function(req, res) {
 
     s3Params: {
       Bucket: "zallchat-shared-images",
-      Key: Number(new Date()) + "-" + uuid.v4() + ".jpg"
+      Key: Number(new Date()) + "-" + uuid.v4() + "." + req.files['file']['extension']
     },
   };
   var uploader = s3Client.uploadFile(params);

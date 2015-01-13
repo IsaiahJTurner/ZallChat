@@ -1,7 +1,11 @@
 var User = require("../models/User"),
 	Setting = require("../models/Setting"),
 	Message = require("../models/Message"),
-	badwords = require("../badwords");
+	badwords = require("../badwords"),
+	Autolinker = require("autolinker"),
+  emo = require('emojize');
+emo.base('https://github.com/ded/emojize/blob/master/sprite/')
+
 exports.home = function(req, res) {
 	res.render('index', {
 		page: 'Home',
@@ -9,7 +13,7 @@ exports.home = function(req, res) {
 	});
 }
 exports.messages = function(req, res) {
-	if (!req.session || !req.session._user) res.redirect("/");
+	if (typeof req.session._user === 'undefined') res.redirect("/");
 	User.find({
 		$or: [{
 			online: true
@@ -54,17 +58,27 @@ exports.messages = function(req, res) {
 				return res.send("Error getting old messages");
 			}
 			messages.forEach(function(message) {
+				message.text = message.text.replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+				message.text = Autolinker.link(message.text, { truncate: 25 });
 				message._user.profile = message._user.profile.substr(message._user.profile.lastIndexOf(".") + 1);
-				for (i = 0; i < badwords.list.length; i++) {
-					var word = badwords.list[i];
-					if (message.text.indexOf(word) > -1) {
-						var stars = "";
-						for (ii = 0; ii < word.length; ii++) {
-							stars = stars + "*";
-						}
-						message.text = message.text.replace(word, stars);
-					}
-				}
+				for (ii = 0; ii < badwords.list.length; ii++) {
+        var word = badwords.list[ii];
+        if (message.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+
+          var stars = "";
+          for (iii = 0; iii < word.length; iii++) {
+            stars = stars + "*";
+          }
+          
+          var regex = new RegExp("(" + word + ")", "gi");
+          message.text = message.text.replace(regex, stars);
+        }
+      }
+      message.text = emo.emojize(message.text);
 			})
 			res.render('messages', {
 				page: 'Messages',
@@ -78,7 +92,7 @@ exports.messages = function(req, res) {
 	});
 }
 exports.settings = function(req, res) {
-	if (req.session && req.session._user && req.session._user.admin)
+	if (typeof req.session._user != 'undefined' && (req.session._user.admin || req.session._user.owner))
 		res.render('settings', {
 			page: 'Settings'
 		});

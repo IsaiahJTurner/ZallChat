@@ -1,5 +1,9 @@
 var Message = require("../models/Message"),
-  badwords = require("../badwords");
+  badwords = require("../badwords"),
+  mongoose = require("mongoose"),
+  Autolinker = require('autolinker'),
+  emo = require('emojize');
+emo.base('https://github.com/ded/emojize/blob/master/sprite/')
 
 exports.get = function(req, res) {
   if (typeof req.session._user === 'undefined') {
@@ -63,24 +67,69 @@ exports.get = function(req, res) {
         _user: userStripped,
         created_at: message.created_at
       }
+      messageStripped.text = messageStripped.text.replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+      messageStripped.text = Autolinker.link(messageStripped.text, { truncate: 25 });
       if (message.image)
         messageStripped.image = message.image;
       for (ii = 0; ii < badwords.list.length; ii++) {
-        var word = badwords.list[i];
-        if (messageStripped.text.indexOf(word) > -1) {
+        var word = badwords.list[ii];
+        if (messageStripped.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+
           var stars = "";
           for (iii = 0; iii < word.length; iii++) {
             stars = stars + "*";
           }
-          messageStripped.text = messageStripped.text.replace(word, stars);
+          
+          var regex = new RegExp("(" + word + ")", "gi");
+          messageStripped.text = messageStripped.text.replace(regex, stars);
         }
       }
+      messageStripped.text = emo.emojize(messageStripped.text);
       messagesStripped.push(messageStripped);
     }
     res.json({
       success: true,
       data: {
         messages: messagesStripped
+      }
+    });
+  });
+}
+
+exports.delete = function(req, res) {
+  var message = req.param("id");
+  if (!mongoose.Types.ObjectId.isValid(message) || typeof req.session._user === 'undefined' || (!req.session._user.admin && !req.session._user.owner))
+    return res.json({
+      success: false,
+      error: {
+        code: 40,
+        message: "You are not an admin or an owner or your message id is invalid. Are you logged in?"
+      }
+    });
+  Message.update({
+    _id: message
+  }, {
+    deleted: true
+  }).exec(function(err, numUpdated) {
+    if (err) {
+      console.log(err);
+      return res.json({
+        success: false,
+        error: {
+          code: 41,
+          message: "Unable to update message."
+        }
+      });
+    }
+    req.io.emit("delete message", message);
+    res.json({
+      success: true,
+      data: {
+        updated: numUpdated
       }
     });
   });
