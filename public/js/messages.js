@@ -59,7 +59,11 @@ function newMessage(name, profile, text) {
 var currentShape;
 
 function scrollToBottom() {
-  if ($(window).width() >= 999)
+  var width = window.innerWidth ||
+            html.clientWidth  ||
+            body.clientWidth  ||
+            screen.availWidth;
+  if (width >= 999)
     var $cont = $(document);
   else
     var $cont = $('#content .messages #reader');
@@ -71,8 +75,15 @@ function scrollToBottom() {
   }, 200);
 }
 var refreshDocHeight = function() {
-  var h = $(window).height();
-  var w = $(window).width();
+  var h = window.innerHeight ||
+             html.clientHeight  ||
+             body.clientHeight  ||
+             screen.availHeight;
+  var w = window.innerWidth ||
+            html.clientWidth  ||
+            body.clientWidth  ||
+            screen.availWidth;
+
   if (w <= 999)
     if (currentShape != "small")
       scrollToBottom();
@@ -314,7 +325,11 @@ $(document).on("click", "time, .message .message .body", function(e) {
 var isLoadingOldMessages;
 var checkIfShouldLoadNewMessages = function() {
   if (!$("#loading").is(":visible")) return; // if there isnt a loading indicator, dont load data
-  if (($('#reader').scrollTop() < 160 && $(window).width() > 999) || ($(document).scrollTop() < 150 && $(window).width() <= 999)) {
+  var width = window.innerWidth ||
+            html.clientWidth  ||
+            body.clientWidth  ||
+            screen.availWidth;
+  if (($('#reader').scrollTop() < 160 && width > 999) || ($(document).scrollTop() < 150 && width <= 999)) {
     if (isLoadingOldMessages) return;
     isLoadingOldMessages = true;
     var topMessage = $($("#reader").children()[1]).attr("id");
