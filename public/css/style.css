@@ -411,7 +411,7 @@ header .me #profile {
 		text-rendering: geometricPrecision;;
 	}
 	#home .login .box {
-		width: 294px;
+		width: 260px;
 	}
 	#home .description {
 		width: 100%;
@@ -424,7 +424,7 @@ header .me #profile {
 	}
 	#home #login {
 		padding: 14px 30px;
-		font-size: 20px;
+		font-size: 17px;
 	}
 	#home .login {
 		margin-top: 0;
