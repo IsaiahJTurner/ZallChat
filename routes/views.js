@@ -12,6 +12,12 @@ exports.home = function(req, res) {
 		description: req.settings.description
 	});
 }
+exports.old = function(req, res) {
+	res.render('old', {
+		page: 'Browser Outdated',
+		description: req.settings.description
+	});
+}
 exports.messages = function(req, res) {
 	if (typeof req.session._user === 'undefined') return res.redirect("/");
 	User.find({

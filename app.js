@@ -158,6 +158,7 @@ var flutter = new Flutter({
 app.get('/', routes.views.home);
 app.get('/messages', routes.views.messages);
 app.get('/settings', routes.views.settings);
+app.get('/old', routes.views.old);
 
 app.post('/api/1.0/ping', routes.chat.ping);
 app.post('/api/1.0/upload', routes.chat.upload);
