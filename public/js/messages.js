@@ -543,3 +543,7 @@ function drop(e) {
   if (user_id.length < 1) return console.log(user_id);
   socket.emit('toggle chatting', user_id);
 }
+
+$(document).on("click", ".image-light", function(e){
+  e.preventDefault();
+});
