@@ -18,8 +18,6 @@ exports.messages = function(req, res) {
 		$or: [{
 			online: true
 		}, {
-			online: false
-		}, {
 			owner: true
 		}, {
 			chatting: true
