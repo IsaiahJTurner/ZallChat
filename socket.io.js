@@ -1,6 +1,8 @@
 /*
   BEGIN MESSAGING CODE
 */
+var uuid = require("uuid");
+var curVersion = uuid.v1();
 var exports = module.exports = {
   init: function(server) {
     var io = require('socket.io')(server);
@@ -33,20 +35,22 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
     }));
     var permissions = new Object();
     io.on('connection', function(socket) {
+      socket.emit("current version", curVersion)
       var cookies = cookie.parse(socket.handshake.headers['cookie']);
       if (!cookies || !cookies.sid) {
-        return console.log('unauthorized');
+        socket.disconnect();
+        return console.log('unauthorized 1');
       }
       Session.findOne({
         sid: cookies.sid
       }).populate('_user').exec(function(err, session) {
         if (!session || err || !session._user) {
-          return console.log('unauthorized');
+          console.log(session, err, session._user)
+          socket.disconnect();
+          return console.log('unauthorized 2');
         }
         if (!session._user.online) {
           session._user.online = true;
-          console.log(session._user.socket);
-          console.log(socket.id);
           /*  this is strange code. my original idea was that you could only be logged
               in to one place at a time because otherwise there are "status": 
               online issues but i gave up. this is a bug. if someone knows a fix to disconnect
@@ -108,7 +112,6 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
 
             });
           }
-          console.log('disconnected user');
         });
         socket.on("toggle chatting", function(userID) {
           if (session && session._user && session._user.admin) {
@@ -261,7 +264,7 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
         });
       });
       socket.on('disconnect', function() {
-        console.log('disconnected');
+        // disconnected called again
       });
     });
   }

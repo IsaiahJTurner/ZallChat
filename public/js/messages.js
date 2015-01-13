@@ -433,6 +433,26 @@ socket.on('delete message', function(message) {
 socket.on('remove user', function(user) {
   $("#" + user._id).remove();
 });
+var curVersion;
+socket.on('current version', function(version) {
+  if (curVersion && version != curVersion) {
+    socket.disconnect();
+    return swal({
+      title: "ZallChat Updated",
+      text: "ZallChat was just updated! Click below to refresh and take advantage of the new features!",
+      type: "info",
+      confirmButtonText: "Update ZallChat"
+    }, function() {
+      location.reload();
+    });
+  }
+  if (typeof curVersion != 'undefined')
+    swal({
+      title: "",
+      timer: 1
+    });
+  curVersion = version;
+});
 socket.on('notify', function(error) {
   if (error.code < 0) return console.log(error);
   if (error.code == 1) {
@@ -454,20 +474,39 @@ socket.on('notify', function(error) {
 
 });
 socket.on('disconnect', function() {
-  var ping = function() {
-    console.log("Disconnected, won't ping.")
-  };
+  /*
   swal({
     title: "Lost Connection",
-    text: "Lost connection to server. Reloading page.",
+    text: "Lost connection to server. Rec.",
     type: "warning",
     closeOnConfirm: false
   }, function() {
     location.reload();
   });
-
+*/
+  // ping should be paused now
+  waitForConnection();
 });
 
+function waitForConnection() {
+  swal({
+    title: "Lost connection!",
+    text: "The connection to ZallChat was lost! Would you like to try to connect again?",
+    type: "warning",
+    confirmButtonColor: "#DD6B55",
+    confirmButtonText: "Retry",
+    closeOnConfirm: false
+  }, function() {
+    console.log(this);
+    if (socket.connected)
+      return swal({
+        title: "",
+        timer: 1
+      });
+    else
+      waitForConnection();
+  });
+}
 $('.upload-image').bind("click", function() {
   $('#message-file').click();
 });
