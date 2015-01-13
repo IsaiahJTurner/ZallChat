@@ -10,7 +10,7 @@ if (!supportsWebSockets) {
   window.location = "/old";
 }
 // this fixes ios opening web app in safari
-if (("standalone" in window.navigator) && window.navigator.standalone) {
+if ((("standalone" in window.navigator) && window.navigator.standalone) || /(iPad|iPhone|iPod)/g.test( navigator.userAgent )) {
       // For iOS Apps
 
       $(document).on('click', 'a', function(e){
