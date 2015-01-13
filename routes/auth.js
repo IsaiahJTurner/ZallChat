@@ -65,39 +65,7 @@ var Flutter = module.exports = function(opts) {
           twitterID: data.id
         }, function(err, user) {
           if (err) return res.send("Error looking up username.");
-          data.profile_image_url_https = data.profile_image_url_https.replace('normal', 'bigger');
-          if (data.profile_image_url_https != user.profile) {
-            if (!fs.existsSync(temp_dir))
-              fs.mkdirSync(temp_dir);
-            needle.get(data.profile_image_url_https, {
-              output: temp_dir + user._id,
-              follow: true
-            }, function(error, response, imageData) {
-              if (error)
-                return console.log(error, response, imageData, "error downloading " + data.profile_image_url_https);
 
-              var params = {
-                localFile: temp_dir + user._id,
-
-                s3Params: {
-                  Bucket: "zallchat-profile-pictures",
-                  Key: user._id + "." + data.profile_image_url_https.substr(data.profile_image_url_https.lastIndexOf(".") + 1)
-                },
-              };
-              var uploader = s3Client.uploadFile(params);
-              uploader.on('error', function(err) {
-                console.error("unable to upload:", err.stack);
-              });
-              uploader.on('progress', function() {
-                console.log("progress", uploader.progressMd5Amount,
-                  uploader.progressAmount, uploader.progressTotal);
-              });
-              uploader.on('end', function() {
-                console.log("done uploading");
-              });
-
-            });
-          }
           if (!user) {
             var user = new User({
               profile: data.profile_image_url_https,
@@ -121,6 +89,39 @@ var Flutter = module.exports = function(opts) {
               })
             });
           } else {
+            data.profile_image_url_https = data.profile_image_url_https.replace('normal', 'bigger');
+            if (data.profile_image_url_https != user.profile) {
+              if (!fs.existsSync(temp_dir))
+                fs.mkdirSync(temp_dir);
+              needle.get(data.profile_image_url_https, {
+                output: temp_dir + user._id,
+                follow: true
+              }, function(error, response, imageData) {
+                if (error)
+                  return console.log(error, response, imageData, "error downloading " + data.profile_image_url_https);
+
+                var params = {
+                  localFile: temp_dir + user._id,
+
+                  s3Params: {
+                    Bucket: "zallchat-profile-pictures",
+                    Key: user._id + "." + data.profile_image_url_https.substr(data.profile_image_url_https.lastIndexOf(".") + 1)
+                  },
+                };
+                var uploader = s3Client.uploadFile(params);
+                uploader.on('error', function(err) {
+                  console.error("unable to upload:", err.stack);
+                });
+                uploader.on('progress', function() {
+                  console.log("progress", uploader.progressMd5Amount,
+                    uploader.progressAmount, uploader.progressTotal);
+                });
+                uploader.on('end', function() {
+                  console.log("done uploading");
+                });
+
+              });
+            }
             user.profile = data.profile_image_url_https;
             user.name = data.name;
             user.oauthAccessToken = req.session.oauthAccessToken,
