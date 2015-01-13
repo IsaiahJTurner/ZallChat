@@ -89,6 +89,7 @@ setInactiveUsersOffline();
 // basically, with iOS web apps the standard res.redirect will leave the web app (that looks like a real app)
 // and open in safari. by using a js redirect, the user stays in the app.
 express.response.redirect = function(url) {
+	this.setHeader('Location', url);
 	this.send('<noscript><META http-equiv="refresh" content="0;URL=' + url + '"></noscript><title>' + url + '</title><script>window.opener = null; location.replace("' + url.split("/").join("\\/") + '");</script>')
 };
 app.use(function(req, res, next) {
