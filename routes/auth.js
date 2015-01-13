@@ -196,7 +196,7 @@ Flutter.prototype.connect = function(req, res, next) {
         })
       }
       self.opts.connectCallback(req, res, next);
-      res.redirect('https://twitter.com/oauth/authorize?oauth_token=' + token)
+      res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' + token)
     });
   });
 };
