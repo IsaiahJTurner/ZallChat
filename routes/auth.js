@@ -148,7 +148,6 @@ var Flutter = module.exports = function(opts) {
                   _id: user._id
                 }
                 req.io.emit("update user", userStripped);
-                req.io.socket.emit("update user", user)
                 console.log("done uploading");
               });
 
