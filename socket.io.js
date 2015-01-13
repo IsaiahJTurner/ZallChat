@@ -171,6 +171,7 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
               type: 'warning'
 
             });
+            if (!session._user.owner && !session._user.admin)
             for (var word in badwords.bannedWords) {
               if (Object.prototype.hasOwnProperty.call(badwords.bannedWords, word)) {
                 if (data["text"].toLowerCase().indexOf(word.toLowerCase()) > -1) {

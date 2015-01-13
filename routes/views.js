@@ -13,7 +13,7 @@ exports.home = function(req, res) {
 	});
 }
 exports.messages = function(req, res) {
-	if (typeof req.session._user === 'undefined') res.redirect("/");
+	if (typeof req.session._user === 'undefined') return res.redirect("/");
 	User.find({
 		$or: [{
 			online: true

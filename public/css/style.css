@@ -228,7 +228,7 @@ header .me #profile {
 	margin-bottom: 5px;
 	z-index: 2;
 }
-#messages.admin time:hover, #messages.owner time:hover, #messages.owner .message .message:hover, #messages.admin .message .message:hover {
+#messages.admin time, #messages.owner time, #messages.owner .message .message, #messages.admin .message .message {
 	cursor: pointer;
 }
 #content .messages #reader .message .main-content .message {
@@ -377,15 +377,17 @@ header .me #profile {
 	}
 }
 @media screen and (max-width: 767px) {
-	.title {
-		font-size: 35px;
+	#home .title {
+		font-size: 45px;
+		top: 90px;
+		text-rendering: geometricPrecision;;
 	}
-	.description {
+	#home .description {
 		width: 100%;
 		font-size: 25px;
 		max-width: 500px;
 	}
-	#login {
+	#home #login {
 		padding: 14px 30px;
 		font-size: 20px;
 	}
@@ -568,11 +570,10 @@ header .me #profile {
 	background: white;
 	background-size: 100% auto;
 
-	box-shadow: 0 0.2em 0 #DCDCDC;
-
 	font-family: sans-serif;
 	font-size: 15px;
 	line-height: 1.5em;
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 	text-align: center;
 }
 
@@ -636,6 +637,7 @@ header .me #profile {
 	right: 0;
 	margin: 0;
 	float: none;
+
 }
 
 .ath-mandatory .ath-container:before {
@@ -714,7 +716,6 @@ header .me #profile {
 	margin-left: -1em;
 	-webkit-transform: scaleX(0.9) rotate(45deg);
 	transform: scaleX(0.9) rotate(45deg);
-	box-shadow: 0.2em 0.2em 0 #DCDCDC;
 }
 
 .ath-ios.ath-tablet:after {
@@ -786,7 +787,7 @@ header .me #profile {
 } 
 
 .fancybox-overlay {
-	z-index: 999999;
+	z-index: 1000;
 }
 .fancybox-skin {
 	background: rgba(45, 45, 45, 0.9);
@@ -795,7 +796,6 @@ header .me #profile {
 	color: rgb(220, 220, 220);
 }
 div[src] {
-	background-image: url(https://s3-us-west-1.amazonaws.com/zallchat-shared-images/1421054941126-9cf8d91d-1ac9-46f6-a767-1858303f307f.jpg);
 	height: 100px;
 	background-repeat: no-repeat;
 	background-size: contain;

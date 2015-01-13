@@ -216,9 +216,11 @@ function renderMessageHTML(message) {
   messageHTML.find(".time").attr("datetime", message.created_at);
   messageHTML.find(".message .body").html(message.text);
   if (message.image) {
-    var imgElem = $('<a class="image-light" href="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/' + message.image + '"><div src="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/' + message.image + '"></div></a>');
+    var imageURL = 'https://s3-us-west-1.amazonaws.com/zallchat-shared-images/' + message.image;
+    var imgElem = $('<a class="image-light" href="' + imageURL + '"><div src="' + imageURL + '"></div></a>');
+    imgElem.find("div[src]").css('background-image', "url('" + imageURL + "')");
+    imgElem.find(".image-light").fancybox(fancyboxParams);
     messageHTML.find(".message").prepend(imgElem);
-    messageHTML.find(".message").find(".image-light").fancybox(fancyboxParams);
   }
   return messageHTML;
 }
