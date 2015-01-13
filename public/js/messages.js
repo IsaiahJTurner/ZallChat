@@ -96,7 +96,7 @@ $('#message-input').keyup(function(e) {
   if (e.keyCode == 13) {
     sendMessage();
   }
-}).focus();
+});
 
 var lastMessage;
 
@@ -149,7 +149,6 @@ function sendMessage() {
       disableInputs(false);
       $("#message-input").focus();
     }, 200);
-    $("#message-input").focus();
   };
   var duringCallback = function(progressPercent) {
     console.log(progressPercent);

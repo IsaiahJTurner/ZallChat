@@ -24,6 +24,18 @@ a {
     font-style: normal;
 
 }
+@font-face {
+    font-family: 'cocogooseregular';
+    src: url('../font/cocogoose/cocogoose-webfont.eot');
+    src: url('../font/cocogoose/cocogoose-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/cocogoose/cocogoose-webfont.woff2') format('woff2'),
+         url('../font/cocogoose/cocogoose-webfont.woff') format('woff'),
+         url('../font/cocogoose/cocogoose-webfont.ttf') format('truetype'),
+         url('../font/cocogoose/cocogoose-webfont.svg#cocogooseregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
 #home {
 	color: white;
 	margin: 0;
@@ -85,14 +97,30 @@ a {
 	text-align: center;
 	width: 100%;
 }
-#login {
+#home .login .box {
+	-webkit-transform: skew(-10deg); 
+  -moz-transform: skew(-10deg); 
+  transform: skew(-10deg);
+  background: #F0FD37;
+  width: 400px;
+  margin-left: auto;
+	margin-right: auto;
+  padding: 10px 10px;
+  border: 1px solid rgba(229, 43, 65, .4);
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+}
+#home .login .box .reverse {
+
+-webkit-transform: skew(10deg); 
+  -moz-transform: skew(10deg); 
+  transform: skew(10deg);
+}
+#home #login {
 	font-size: 25px;
   text-decoration: none;
-  color: white;
-	background: rgba(95,189,255,0.70);
-	border: 1px solid rgba(0,0,0,0.20);
-	padding: 15px 50px;
-	border-radius: 9px;
+	color: black;
+	font-family: 'cocogooseregular', HelveticaNeue-Medium, 'Open Sans', sans-serif;
+	text-transform: uppercase;
 }
 #home .skip {
 	text-align: center;
@@ -379,27 +407,39 @@ header .me #profile {
 @media screen and (max-width: 767px) {
 	#home .title {
 		font-size: 45px;
-		top: 90px;
+		top: 40px;
 		text-rendering: geometricPrecision;;
+	}
+	#home .login .box {
+		width: 300px;
 	}
 	#home .description {
 		width: 100%;
 		font-size: 25px;
 		max-width: 500px;
 	}
+	#home .bottom {
+		top: 120px;
+		padding-top: 50px;
+	}
 	#home #login {
 		padding: 14px 30px;
 		font-size: 20px;
+	}
+	#home .login {
+		margin-top: 0;
+	}
+	#home .skip {
+		margin-top: -20px;
 	}
 }
 
 #content .users .section {
 	text-align: left;
 	color: white;
-	font-family: HelveticaNeue-Medium, 'Open Sans', sans-serif;
+	font-family: 'cocogooseregular', HelveticaNeue-Medium, 'Open Sans', sans-serif;
 	background: #7BC8FF;
 	padding: 10px;
-	font-size: 20px
 	-webkit-transform: skew(-10deg); 
   -moz-transform: skew(-10deg); 
   transform: skew(-10deg);
@@ -411,7 +451,7 @@ header .me #profile {
 	font-weight: 700;
 	margin-bottom: 10px;
 	margin-top: 10px;
-	font-size: 18px;
+	font-size: 15.5px;
 	padding: 5px;
 }
 #content .users .section .title {
