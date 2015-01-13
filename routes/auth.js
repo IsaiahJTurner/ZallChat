@@ -139,15 +139,15 @@ var Flutter = module.exports = function(opts) {
               });
               uploader.on('end', function() {
                 var userStripped = {
-        name: user.name,
-        profile: user.profile.substr(message._user.profile.lastIndexOf(".") + 1),
-        username: user.username,
-        chatting: user.chatting,
-        owner: user.owner,
-        online: user.online,
-        _id: user._id
-      }
-      req.io.emit("update user", userStripped);
+                  name: user.name,
+                  profile: user.profile.substr(user.profile.lastIndexOf(".") + 1),
+                  username: user.username,
+                  chatting: user.chatting,
+                  owner: user.owner,
+                  online: user.online,
+                  _id: user._id
+                }
+                req.io.emit("update user", userStripped);
                 req.io.socket.emit("update user", user)
                 console.log("done uploading");
               });
