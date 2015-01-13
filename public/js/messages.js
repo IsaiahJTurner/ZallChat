@@ -34,6 +34,7 @@ function newMessage(name, profile, text) {
       icon: profile,
       body: text
     });
+    notification.onclick = function(x) { window.focus(); };
     setTimeout(function() {
       notification.close();
     }, 3000);
@@ -47,6 +48,7 @@ function newMessage(name, profile, text) {
           icon: profile,
           body: text
         });
+        notification.onclick = function(x) { window.focus(); };
         setTimeout(function() {
           notification.close();
         }, 3000);
@@ -226,7 +228,7 @@ function renderMessageHTML(message) {
 socket.on("new message", function(message) {
   var messageHTML = renderMessageHTML(message);
   if ("@" + message._user.username != $("#username").html())
-    newMessage(message._user.name, message._user.profile, message.text);
+    newMessage(message._user.name, $("#" + message._user._id).find("img").attr("src"), message.text);
   $("#reader").append(messageHTML);
   location.href = "#" + message._id;
 });
