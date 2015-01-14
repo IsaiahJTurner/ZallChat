@@ -104,6 +104,7 @@ window.setInterval(refreshDocHeight, 200);
 refreshDocHeight();
 $(document).on('click', '.image-light', function(e) {
   e.preventDefault();
+  return false;
 });
 $(document).ready(scrollToBottom);
 $(document).ready(function() {
