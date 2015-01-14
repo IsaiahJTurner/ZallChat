@@ -34,7 +34,16 @@ a {
          url('../font/cocogoose/cocogoose-webfont.svg#cocogooseregular') format('svg');
     font-weight: normal;
     font-style: normal;
-
+}
+@font-face {
+    font-family: 'brushupregular';
+    src: url('../font/brushup/brushup-webfont.eot');
+    src: url('../font/brushup/brushup-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../font/brushup/brushup-webfont.woff') format('woff'),
+         url('../font/brushup/brushup-webfont.ttf') format('truetype'),
+         url('../font/brushup/brushup-webfont.svg#brushupregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 #home {
 	color: white;
@@ -78,7 +87,7 @@ a {
 #home .title {
 	font-size: 100px;
 	text-align: center;
-	font-family: 'edoregular', Arial, sans-serif;
+	font-family: 'brushupregular', 'edoregular', Arial, sans-serif;
 	margin-top: 60px;
 	position: absolute;
 	z-index: 9;
@@ -157,7 +166,7 @@ header {
 }
 header .logo {
 	display: inline-block;
-	font-family: 'edoregular', Arial, sans-serif;
+	font-family: 'brushupregular', 'edoregular', Arial, sans-serif;
 	font-size: 50px;
 	position: absolute;
 	left: 13px;
