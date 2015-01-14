@@ -32,7 +32,7 @@ function newMessage(name, profile, text) {
   } else if (Notification.permission === "granted") {
     var notification = new Notification(name, {
       icon: profile,
-      body: text
+      body: $('<textarea/>').html(text).val()
     });
     notification.onclick = function(x) {
       window.focus();
@@ -48,7 +48,7 @@ function newMessage(name, profile, text) {
       if (permission === "granted") {
         var notification = new Notification(name, {
           icon: profile,
-          body: text
+          body: $('<textarea/>').html(text).val()
         });
         notification.onclick = function(x) {
           window.focus();
