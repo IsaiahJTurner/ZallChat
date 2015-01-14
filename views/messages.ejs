@@ -59,20 +59,20 @@
 			<div id="chatting">
 				<% if (session._user.chatting && !session._user.owner) { %>
 				<div class="user me" id="<%= session._user._id %>" data-username="<%= session._user.username %>" >
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img id="<%= session._user._id %>" draggable="true" ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img data-id="<%= session._user._id %>" draggable="true" ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
 					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
 				</div>
 				<% } %>
 				<% owner.forEach(function(user) { %>
 					<div class="user owner" id="<%= user._id %>" data-username="<%= user.username %>" >
-						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img id="<%= user._id %>" draggable="true"
+						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img data-id="<%= user._id %>" draggable="true"
 ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile %>"></a>
 						<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class='status <%= (user.online == true ? "online" : "offline") %>'></div></a>
 					</div>
 	  			<% }); %>
 				<% chatting.forEach(function(user) { %>
 					<div class="user" id="<%= user._id %>" data-username="<%= user.username %>" >
-						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img id="<%= user._id %>" draggable="true"
+						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img data-id="<%= user._id %>" draggable="true"
 ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile %>"></a>
 						<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class='status <%= (user.online == true ? "online" : "offline") %>'></div></a>
 					</div>
@@ -83,14 +83,14 @@ ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.co
 			<div id="visiting">
 				<% if (!session._user.chatting && !session._user.owner) { %>
 				<div class="user me" id="<%= session._user._id %>" data-username="<%= session._user.username %>" >
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img id="<%= session._user._id %>" draggable="true"
+					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img data-id="<%= session._user._id %>" draggable="true"
 ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
 					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
 				</div>
 				<% } %>
 				<% visiting.forEach(function(user) { %>
 					<div class="user visiting" id="<%= user._id %>" data-username="<%= user.username %>" >
-						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img id="<%= user._id %>" draggable="true"
+						<a href="https://twitter.com/<%= user.username %>" target="_blank"><img data-id="<%= user._id %>" draggable="true"
 ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile %>"></a>
 						<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class='status <%= (user.online == true ? "online" : "offline") %>'></div></a>
 					</div>

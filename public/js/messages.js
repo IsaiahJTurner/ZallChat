@@ -613,7 +613,7 @@ function allowDrop(e) {
 
 function drag(e) {
   var elem = $(e.target);
-  e.dataTransfer.setData("user_id", elem.attr("id"));
+  e.dataTransfer.setData("user_id", elem.attr("data-id"));
 }
 
 function drop(e) {
