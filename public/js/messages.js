@@ -34,7 +34,9 @@ function newMessage(name, profile, text) {
       icon: profile,
       body: text
     });
-    notification.onclick = function(x) { window.focus(); };
+    notification.onclick = function(x) {
+      window.focus();
+    };
     setTimeout(function() {
       notification.close();
     }, 3000);
@@ -48,7 +50,9 @@ function newMessage(name, profile, text) {
           icon: profile,
           body: text
         });
-        notification.onclick = function(x) { window.focus(); };
+        notification.onclick = function(x) {
+          window.focus();
+        };
         setTimeout(function() {
           notification.close();
         }, 3000);
@@ -60,9 +64,9 @@ var currentShape;
 
 function scrollToBottom() {
   var width = window.innerWidth ||
-            html.clientWidth  ||
-            body.clientWidth  ||
-            screen.availWidth;
+    html.clientWidth ||
+    body.clientWidth ||
+    screen.availWidth;
   if (width >= 999)
     var $cont = $(document);
   else
@@ -76,13 +80,13 @@ function scrollToBottom() {
 }
 var refreshDocHeight = function() {
   var h = window.innerHeight ||
-             html.clientHeight  ||
-             body.clientHeight  ||
-             screen.availHeight;
+    html.clientHeight ||
+    body.clientHeight ||
+    screen.availHeight;
   var w = window.innerWidth ||
-            html.clientWidth  ||
-            body.clientWidth  ||
-            screen.availWidth;
+    html.clientWidth ||
+    body.clientWidth ||
+    screen.availWidth;
 
   if (w <= 999)
     if (currentShape != "small")
@@ -100,7 +104,12 @@ refreshDocHeight();
 
 
 $(document).ready(scrollToBottom);
-
+$(document).ready(function() {
+  $("#message-input").focus();
+});
+$(document).keypress(function() {
+  $("#message-input").focus();
+});
 $("#message-form").submit(function(e) {
   e.preventDefault();
   sendMessage();
@@ -121,8 +130,78 @@ function disableInputs(boolean) {
   $('.upload-image').removeClass((boolean ? "enabled" : "disabled"));
 }
 
+function processCommand(command, param) {
+  switch (command) {
+    case "help":
+      {
+        swal("Help", "There are lots of hidden features! Try out these commands.\n\nGeneral Commands\n/help - shows this menu\n/who - lists all users in the chat\n\nAdmin Only Commands\n/toggle [username] - toggles the chatting role of a user");
+        break;
+      }
+    case "toggle":
+      {
+        socket.emit('toggle chatting', $("[data-username=" + param).attr("id"));
+        break;
+      }
+    case "who":
+      {
+        var online = new Array();
+        var offline = new Array();
+        var visiting = new Array();
+        var left = new Array();
+        $("#chatting").children().each(function(user) {
+          $user = $(this);
+          console.log($user.html());
+          if ($user.find(".status").hasClass("online")) {
+            online.push($user);
+          } else {
+            offline.push($user);
+          }
+        });
+        $("#visiting").children().each(function() {
+          $user = $(this);
+          if ($user.find(".status").hasClass("online")) {
+            visiting.push($user);
+          } else {
+            left.push($user);
+          }
+        });
+        var groups = [online, offline, visiting, left];
+        var groupsStr = new Array();
+        console.log(groups);
+        for (i = 0; i < groups.length; i++) {
+          var group = groups[i];
+          var groupStr = "";
+          for (ii = 0; ii < group.length; ii++) {
+            var $user = group[ii];
+            console.log($user);
+            groupStr = groupStr + $user.attr("data-username") + ", ";
+          }
+          groupStr = groupStr.slice(0, - 2);
+          groupsStr[i] = groupStr;
+        }
+        swal("Group Members", "Online Users\n" + groupsStr[0] + "\n\nOffline Users\n" + groupsStr[1] + "\n\nVisiting Users\n" + groupsStr[2] + "\n\nRecently Left\n" + groupsStr[3]);
+        socket.emit('who');
+        break;
+      }
+    default:
+      {
+        sweetAlert("Command Not Found", "The command you entered does not exist!", "error");
+      }
+  }
+  $('#message-input').val("");
+  $("#message-file").val("");
+  $(".upload-image").attr("src", "/img/camera.svg");
+  disableInputs(false);
+}
+
 function sendMessage() {
+
   disableInputs(true);
+  var text = $('#message-input').val();
+  if (text.charAt(0) == "/") {
+    var command = text.split(' ', 1)[0].replace('/', '');
+    return processCommand(command, text.split(command + " ")[1])
+  }
   var finishSend = function(image) {
     var thisMessage = $('#message-input').val();
     if ((lastMessage == thisMessage || thisMessage.length == 0) && !image) {
@@ -326,9 +405,9 @@ var isLoadingOldMessages;
 var checkIfShouldLoadNewMessages = function() {
   if (!$("#loading").is(":visible")) return; // if there isnt a loading indicator, dont load data
   var width = window.innerWidth ||
-            html.clientWidth  ||
-            body.clientWidth  ||
-            screen.availWidth;
+    html.clientWidth ||
+    body.clientWidth ||
+    screen.availWidth;
   if (($('#reader').scrollTop() < 160 && width > 999) || ($(document).scrollTop() < 150 && width <= 999)) {
     if (isLoadingOldMessages) return;
     isLoadingOldMessages = true;
@@ -376,7 +455,7 @@ $('#reader').scroll(checkIfShouldLoadNewMessages);
 $(document).scroll(checkIfShouldLoadNewMessages);
 
 function insertUser(user) {
-  var userHTML = $('<div class="user animated flash" id="' + user._id + '""><a target="_blank" class="profile-link"><img data-id="' + user._id + '" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
+  var userHTML = $('<div class="user animated flash" id="' + user._id + '" data-username="' + user.username + '"><a target="_blank" class="profile-link"><img data-id="' + user._id + '" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
   if ("@" + user.username == $("#username").html() && !user.owner)
     userHTML.addClass("me");
   else if (user.owner)
@@ -544,6 +623,6 @@ function drop(e) {
   socket.emit('toggle chatting', user_id);
 }
 
-$(document).on("click", ".image-light", function(e){
+$(document).on("click", ".image-light", function(e) {
   e.preventDefault();
 });

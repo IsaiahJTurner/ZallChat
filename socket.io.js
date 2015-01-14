@@ -118,12 +118,11 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
             User.findOne({
               _id: userID
             }, function(err, user) {
-              if (err) {
+              if (err || !user) {
                 console.log(err);
                 return socket.emit("notify", {
-                  message: "Unable to get the user.",
+                  message: "Unable to get the user. Remember, usernames are case sensitive.",
                   code: 9,
-                  redirect: "/messages",
                   type: 'error'
                 });
               }
