@@ -119,7 +119,7 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
               _id: userID
             }, function(err, user) {
               if (err || !user) {
-                console.log(err);
+                console.log("unable", err, user);
                 return socket.emit("notify", {
                   message: "Unable to get the user. Remember, usernames are case sensitive.",
                   code: 9,
