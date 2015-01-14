@@ -68,11 +68,14 @@ exports.get = function(req, res) {
         created_at: message.created_at
       }
       messageStripped.text = messageStripped.text.replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-      messageStripped.text = Autolinker.link(messageStripped.text, { truncate: 25 });
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(new RegExp('\r?\n', 'g'), '<br />');
+      if (message._user.owner || message._user.admin)
+        messageStripped.text = Autolinker.link(messageStripped.text, {
+          truncate: 25
+        });
       if (message.image)
         messageStripped.image = message.image;
       for (ii = 0; ii < badwords.list.length; ii++) {
@@ -83,7 +86,7 @@ exports.get = function(req, res) {
           for (iii = 0; iii < word.length; iii++) {
             stars = stars + "*";
           }
-          
+
           var regex = new RegExp("(" + word + ")", "gi");
           messageStripped.text = messageStripped.text.replace(regex, stars);
         }

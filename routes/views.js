@@ -3,7 +3,7 @@ var User = require("../models/User"),
 	Message = require("../models/Message"),
 	badwords = require("../badwords"),
 	Autolinker = require("autolinker"),
-  emo = require('emojize');
+	emo = require('emojize');
 emo.base('https://github.com/ded/emojize/blob/master/sprite/')
 
 exports.home = function(req, res) {
@@ -63,26 +63,29 @@ exports.messages = function(req, res) {
 			}
 			messages.forEach(function(message) {
 				message.text = message.text.replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-				message.text = Autolinker.link(message.text, { truncate: 25 });
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#39;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;').replace(new RegExp('\r?\n', 'g'), '<br />');
+				if (message._user.owner || message._user.admin)
+					message.text = Autolinker.link(message.text, {
+						truncate: 25
+					});
 				message._user.profile = message._user.profile.substr(message._user.profile.lastIndexOf(".") + 1);
 				for (ii = 0; ii < badwords.list.length; ii++) {
-        var word = badwords.list[ii];
-        if (message.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
+					var word = badwords.list[ii];
+					if (message.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
 
-          var stars = "";
-          for (iii = 0; iii < word.length; iii++) {
-            stars = stars + "*";
-          }
-          
-          var regex = new RegExp("(" + word + ")", "gi");
-          message.text = message.text.replace(regex, stars);
-        }
-      }
-      message.text = emo.emojize(message.text);
+						var stars = "";
+						for (iii = 0; iii < word.length; iii++) {
+							stars = stars + "*";
+						}
+
+						var regex = new RegExp("(" + word + ")", "gi");
+						message.text = message.text.replace(regex, stars);
+					}
+				}
+				message.text = emo.emojize(message.text);
 			})
 			res.render('messages', {
 				page: 'Messages',

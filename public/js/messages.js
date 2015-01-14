@@ -177,7 +177,7 @@ function processCommand(command, param) {
             console.log($user);
             groupStr = groupStr + $user.attr("data-username") + ", ";
           }
-          groupStr = groupStr.slice(0, - 2);
+          groupStr = groupStr.slice(0, -2);
           groupsStr[i] = groupStr;
         }
         swal("Group Members", "Online Users\n" + groupsStr[0] + "\n\nOffline Users\n" + groupsStr[1] + "\n\nVisiting Users\n" + groupsStr[2] + "\n\nRecently Left\n" + groupsStr[3]);

@@ -345,13 +345,14 @@ header .me #profile {
 	border: 1px solid #CC2B4B;
 	border-radius: 3px;
 	color: white;
-	padding: 10px 25px;
+	padding: 10px 0px;
 	font-size: 20px;
 	float: right;
 	width: 99px;
 	outline: none!important;
 	cursor: pointer;
 }
+
 #content .users {
 	width: 280px;
 	float: right;
@@ -377,6 +378,11 @@ header .me #profile {
 	#content .messages #reader .message .main-content .time {
 		margin-left: 0;
 	}
+	#content .messages #bar button {
+	width: 62px;
+	padding: 10px 0px;
+	font-size: 18px;
+}
 }
 @media screen and (max-width: 999px) {
 	header {

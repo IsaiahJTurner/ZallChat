@@ -232,10 +232,11 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
                   .replace(/"/g, '&quot;')
                   .replace(/'/g, '&#39;')
                   .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;');
-                messageStripped.text = Autolinker.link(messageStripped.text, {
-                  truncate: 25
-                });
+                  .replace(/>/g, '&gt;').replace(new RegExp('\r?\n','g'), '<br />');
+                  if (message._user.owner || message._user.admin)
+                    messageStripped.text = Autolinker.link(messageStripped.text, {
+                      truncate: 25
+                    });
                 for (ii = 0; ii < badwords.list.length; ii++) {
                   var word = badwords.list[ii];
                   if (messageStripped.text.toLowerCase().indexOf(word.toLowerCase()) > -1) {
