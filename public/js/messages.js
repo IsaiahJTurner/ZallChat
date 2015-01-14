@@ -95,9 +95,10 @@ var refreshDocHeight = function() {
     if (currentShape != "large")
       scrollToBottom();
   currentShape = (w > 999) ? "large" : "small";
-  $('#content, .messages, #reader').css("height", (h - 160));
+  $('#content').css("height", (h - 160));
+  $("#reader, .messages").css("height", (h - 120 - $("#bar").height()));
   $('.users').css("height", (h - 86));
-  $('.users').css("margin-top", -(h - 160));
+  $('.users').css("margin-top", -(h - 120 - $("#bar").height()));
 };
 window.setInterval(refreshDocHeight, 200);
 refreshDocHeight();
@@ -115,7 +116,7 @@ $("#message-form").submit(function(e) {
   sendMessage();
 });
 $('#message-input').keyup(function(e) {
-  if (e.keyCode == 13) {
+  if (e.keyCode == 13 && !e.ctrlKey && !e.altKey && !Modernizr.touch) {
     sendMessage();
   }
 });

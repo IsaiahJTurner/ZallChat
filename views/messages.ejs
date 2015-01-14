@@ -44,9 +44,11 @@
 					<button id="send-button" type="submit">Send</button>
 					<div class="input">
 						<% if (session._user.chatting) { %>
-						<input type="text" id="message-input" placeholder="Say something!">
+						<!--<input type="text" id="message-input" placeholder="Say something!">-->
+						<textarea id="message-input" placeholder="Say something!" rows="1" cols="40" class="expand"></textarea>
 						<% } else { %>
-						<input type="text" id="message-input" placeholder="Say something...">
+						<!--<input type="text" id="message-input" placeholder="Say something...">-->
+						<textarea id="message-input" placeholder="Say something..." rows="1" cols="40" class="expand"></textarea>
 						<% } %>
 						<img class="upload-image" src="/img/camera.svg" <% if (session._user.admin || session._user.owner) { %>style="display:block;"<% } %>>
 					<input id="message-file" type='file' accept="image/*" />
