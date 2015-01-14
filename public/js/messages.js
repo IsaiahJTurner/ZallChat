@@ -102,8 +102,9 @@ var refreshDocHeight = function() {
 };
 window.setInterval(refreshDocHeight, 200);
 refreshDocHeight();
-
-
+$(document).on('click', '.image-light', function(e) {
+  e.preventDefault();
+});
 $(document).ready(scrollToBottom);
 $(document).ready(function() {
   $("#message-input").focus();
