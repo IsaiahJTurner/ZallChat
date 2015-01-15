@@ -23,7 +23,7 @@
     "should": "^4.4.2",
     "simple-twitter": "^1.0.7",
     "socket.io": "^1.2.1",
-    "socket.io-emitter": "^0.2.0",
+    "socket.io-emitter": "jbblanchet/socket.io-emitter.git#a784e096e3c6bfaa97817082fdf1e5b6a79fcd2a",
     "socket.io-redis": "^0.1.4",
     "tobi": "^0.3.2",
     "uuid": "^2.0.1",
