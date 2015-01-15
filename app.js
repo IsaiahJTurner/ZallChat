@@ -4,7 +4,6 @@
 if (!process.env.MONGOURL) {
 	require("./config");
 }
-	console.log(process.env);
 
 var express = require('express'),
 	ejs = require('ejs'),
