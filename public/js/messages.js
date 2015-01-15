@@ -12,7 +12,7 @@ var ping = function() {
 ping();
 
 var socket = io({
-  transports: ['websocket']
+  //transports: ['websocket']
 });
 var fancyboxParams = {
   openEffect: 'elastic',

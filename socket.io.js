@@ -26,9 +26,10 @@ emo.base('https://github.com/ded/emojize/blob/master/sprite/')
     var redisClient = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
     redisClient.auth(process.env.REDIS_PASSWORD);
 
-    io.set('transports', [
+    /*io.set('transports', [
       'websocket'
     ]);
+*/
     io.adapter(redisAdapter({
       pubClient: pub,
       subClient: sub
