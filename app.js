@@ -167,7 +167,7 @@ app.use(function(req, res, next) {
 			settings: settingsDict,
 			session: req.session
 		});
-		if (settingsDict.maintenance.value && req.path != "/settings" && !((req.session._user.admin || req.session._user.owner) && req.param("maintenance")))
+		if (settingsDict.maintenance.value && req.path == "/messages" && !((req.session._user && (req.session._user.admin || req.session._user.owner)) && req.param("maintenance")))
 			return res.render('maintenance', {
 				page: 'Home',
 				description: req.settings.description
