@@ -46,8 +46,8 @@ app.use(bodyParser.urlencoded({
 app.use(expressLayouts);
 app.use(cookieParser());
 // app.use(express.logger('tiny'))
-
-app.use(express.static(path.join(__dirname, 'public')));
+if (!process.env.EB) 
+	app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
 	res.header("X-powered-by", "@IsaiahJTurner")
 	next()
