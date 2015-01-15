@@ -2,9 +2,10 @@
  * Module dependencies
  */
 if (!process.env.MONGOURL) {
-	console.log(process.env);
 	require("./config");
 }
+	console.log(process.env);
+
 var express = require('express'),
 	ejs = require('ejs'),
 	expressLayouts = require("express-ejs-layouts"),
