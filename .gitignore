@@ -8,4 +8,3 @@ tmp/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
-/.ebextensions/02_env.config

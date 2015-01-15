@@ -112,10 +112,8 @@ var Flutter = module.exports = function(opts) {
           }
           data.profile_image_url_https = data.profile_image_url_https.replace('normal', 'bigger');
           if (data.profile_image_url_https != user.profile) {
-            if (!fs.existsSync(temp_dir)) {
-              fs.chmodSync(temp_dir, '755');
+            if (!fs.existsSync(temp_dir))
               fs.mkdirSync(temp_dir);
-            }
             needle.get(data.profile_image_url_https, {
               output: temp_dir + user._id,
               follow: true
