@@ -103,4 +103,6 @@ exports.settings = function(req, res) {
 		res.render('settings', {
 			page: 'Settings'
 		});
+	else
+		res.send("you thought ;)")
 }

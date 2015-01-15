@@ -27,6 +27,8 @@ var fancyboxParams = {
 $(".image-light").fancybox(fancyboxParams);
 
 function newMessage(name, profile, text) {
+  if (localStorage.getItem("notificationsOff"))
+    return console.log("notifications off");
   if (!("Notification" in window)) {
     console.log("This browser does not support desktop notification");
   } else if (Notification.permission === "granted") {
@@ -134,15 +136,33 @@ function disableInputs(boolean) {
 }
 
 function processCommand(command, param) {
+  command = command.replace("\n", "").replace("\r", "");
+  if (!param)
+    param = "";
+    param = param.replace("\n", "").replace("\r", "");
   switch (command) {
     case "help":
       {
-        swal("Help", "There are lots of hidden features! Try out these commands.\n\nGeneral Commands\n/help - shows this menu\n/who - lists all users in the chat\n\nAdmin Only Commands\n/toggle [username] - toggles the chatting role of a user");
+        var adminCommands = "";
+        if ($("body").hasClass("admin"))
+          adminCommands = "\n\nAdmin Only Commands\n/toggle [username] - toggles the chatting role of a user";
+        swal("Help", "There are lots of hidden features! Try out these commands.\n\nGeneral Commands\n/help - shows this menu\n/who - lists all users in the chat\n/notifications [on/off] - temporarily disables or reneables notifications" + adminCommands);
         break;
       }
     case "toggle":
       {
         socket.emit('toggle chatting', $("[data-username=" + param).attr("id"));
+        break;
+      }
+    case "notifications":
+      {
+        param = param.toLowerCase();
+        localStorage.setItem("notificationsOff", (param == "on") ? false : true);
+        swal({
+          title: "Notifications " + ((param == "on") ? "Enabled" : "Disabled"),
+          type: "success",
+          timer: 1000
+        });
         break;
       }
     case "who":
@@ -200,13 +220,14 @@ function processCommand(command, param) {
 function sendMessage() {
 
   disableInputs(true);
-  var text = $('#message-input').val();
-  if (text.charAt(0) == "/") {
-    var command = text.split(' ', 1)[0].replace('/', '');
-    return processCommand(command, text.split(command + " ")[1])
+  var thisMessage = $.trim($('#message-input').val());
+  if (thisMessage.charAt(0) == "/") {
+    if (thisMessage.length == 1)
+      return disableInputs(false);
+    var command = thisMessage.split(' ', 1)[0].replace('/', '');
+    return processCommand(command, thisMessage.split(command + " ")[1])
   }
   var finishSend = function(image) {
-    var thisMessage = $('#message-input').val();
     if ((lastMessage == thisMessage || thisMessage.length == 0) && !image) {
       disableInputs(false);
       return console.log("not ready to send");
@@ -538,7 +559,7 @@ socket.on('current version', function(version) {
     socket.disconnect();
     return swal({
       title: "ZallChat Updated",
-      text: "ZallChat was just updated! Click below to refresh and take advantage of the new features!",
+      text: "ZallChat was just updated! Click below to refresh and take advantage of the changes!",
       type: "info",
       confirmButtonText: "Update ZallChat"
     }, function() {
@@ -554,7 +575,7 @@ socket.on('current version', function(version) {
 });
 socket.on('notify', function(error) {
   if (error.code < 0) return console.log(error);
-  if (error.code == 1) {
+  if (error.code == 50) {
     $("#message-input").blur();
     $("#message-input").val(lastMessage);
     lastMessage = "";
@@ -628,4 +649,9 @@ function drop(e) {
 
 $(document).on("click", ".image-light", function(e) {
   e.preventDefault();
+});
+$(window).on('hashchange', function(e) {
+  setTimeout(function() {
+    history.pushState("", "Zall Chat", window.location.protocol + "//" + window.location.host);
+  }, 100)
 });

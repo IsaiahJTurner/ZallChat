@@ -10,7 +10,9 @@
     <textarea  id="<%= setting.key %>" name="value"><%= setting.value %></textarea>
     <% } else if (setting.type == "text"){ %>
     <input id="<%= setting.key %>" type="text" name="value" value="<%= setting.value %>">
-    <% } else { %>
+    <% } else if (setting.type == "boolean") { %>
+    <input id="<%= setting.key %>" type="checkbox" name="value" value="true" <% if (setting.value) { %>checked<% } %>>
+    <%} else {%>
     <%= setting.type %> is not a valid type for editing <%= setting.label %> (<%= setting.key %>)
     <% } %>
     <button type="submit" class="btn btn-small btn-default">Update</button>

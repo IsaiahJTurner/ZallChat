@@ -19,12 +19,12 @@ var express = require('express'),
 	Setting = require("./models/Setting"),
 	Flutter = require('./routes/auth'),
 	uuid = require('node-uuid'),
-	multer  = require('multer'),
+	multer = require('multer'),
 	io = require('socket.io-emitter-jbblanchet')({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    pass: process.env.REDIS_PASSWORD
-  })
+		host: process.env.REDIS_HOST,
+		port: process.env.REDIS_PORT,
+		pass: process.env.REDIS_PASSWORD
+	})
 
 fs.readdirSync("./routes").forEach(function(file) {
 	require("./routes/" + file);
@@ -39,14 +39,16 @@ var app = express()
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views')
 app.use(bodyParser.json());
-app.use(multer({ dest: './tmp/'}))
+app.use(multer({
+	dest: './tmp/'
+}))
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
 app.use(expressLayouts);
 app.use(cookieParser());
 // app.use(express.logger('tiny'))
-if (!process.env.EB) 
+if (!process.env.EB)
 	app.use("/static", express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
 	res.header("X-powered-by", "@IsaiahJTurner")
@@ -55,34 +57,52 @@ app.use(function(req, res, next) {
 
 var minutes = 5,
 	the_interval = minutes * 60 * 1000;
-console.log("Error: the next mongo should be a find and set (not update) and should then emit the update to all clients.")
-
 var setInactiveUsersOffline = function() {
 	var time = new Date();
 	time.setMinutes(time.setMinutes() - 25); // there is an inacuracy of 30 minutes if the server crashes, unfortunatly
-	User.update({
+	var query = {
 		$or: [{
-			$and: [
-				{
-					last_seen: {
-						$lt: time
-					}
-				}, {
-					online: true
+			$and: [{
+				last_seen: {
+					$lt: time
 				}
-			]
+			}, {
+				online: true
+			}]
 		}, {
 			last_seen: null
 		}]
-	}, {
-		$set: {
-			online: false
-		}
-	}, {
-		multi: true
-	}, function(err, numAffected) {
-		if (numAffected > 0) console.log("THIS IS BAD! " + numAffected + " users were not marked as offline!");
+	};
+	User.find(query, function(err, users) {
+		if (err)
+			return console.log("Unable to update the users. THIS IS BAD!");
+		if (users.length <= 0)
+			return; // no users to update
+		User.update(query, {
+			$set: {
+				online: false
+			}
+		}, {
+			multi: true
+		}, function(err, numAffected) {
+			if (numAffected > 0) console.log("THIS IS BAD! " + numAffected + " users were not marked as offline!");
+			for (i = 0; i < users.length; i++) {
+				var user = users[i];
+
+				var userStripped = {
+					name: user.name,
+					profile: user.profile.substr(user.profile.lastIndexOf(".") + 1),
+					username: user.username,
+					chatting: user.chatting,
+					owner: user.owner,
+					online: false,
+					_id: user._id
+				}
+				io.emit("update user", userStripped);
+			}
+		})
 	})
+
 }
 setInterval(setInactiveUsersOffline, the_interval); // run every minute
 setInactiveUsersOffline();
@@ -131,6 +151,7 @@ app.use(function(req, res, next) {
 		});
 	}
 });
+var settings;
 app.use(function(req, res, next) {
 	Setting.find(function(err, settings) {
 		if (err) return res.send("Error in app. Section: 2");
@@ -141,10 +162,16 @@ app.use(function(req, res, next) {
 			settingsDict[key] = setting;
 		}
 		req.settings = settingsDict;
+		settings = settingsDict;
 		res.locals({
 			settings: settingsDict,
 			session: req.session
 		});
+		if (settingsDict.maintenance.value && req.path != "/settings" && !((req.session._user.admin || req.session._user.owner) && req.param("maintenance")))
+			return res.render('maintenance', {
+				page: 'Home',
+				description: req.settings.description
+			});
 		next()
 	});
 });

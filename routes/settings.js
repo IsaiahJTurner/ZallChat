@@ -48,7 +48,9 @@ exports.update = function(req, res) {
       setting.value = new String(value);
     } else if (setting.type == "text") {
       setting.value = new String(value);
-    } else {
+    } else if (setting.type == "boolean") {
+      setting.value = value ? true : false;
+    }else {
       setting.value = undefined;
       return res.json({
         success: false,
@@ -68,6 +70,8 @@ exports.update = function(req, res) {
           }
         });
       }
+      if (setting.value && setting.key == "maintenance")
+        req.io.emit("current version", "0");
       res.json({
           success: true
         });

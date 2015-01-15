@@ -5,7 +5,7 @@
 		</div>
 		<div class="me">
 			<!--<div id="name"><%= session._user.name %></div>-->
-			<a id="username" href="/twitter/logout" target="_blank">@<%= session._user.username %></a>
+			<a id="username" href="/twitter/logout">@<%= session._user.username %></a>
 			<a href="/twitter/logout"><img id="profile" class="profile" id="<%= session._user._id %>" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
 		</div>
 	</header>
