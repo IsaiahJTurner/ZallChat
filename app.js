@@ -20,7 +20,7 @@ var express = require('express'),
 	Flutter = require('./routes/auth'),
 	uuid = require('node-uuid'),
 	multer  = require('multer'),
-	io = require('socket.io-emitter')({
+	io = require('socket.io-emit')({
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
     pass: process.env.REDIS_PASSWORD
