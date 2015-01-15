@@ -1,3 +1,9 @@
 process.env.TWITTER_KEY = "";
 process.env.TWITTER_SECRET = "";
+process.env.TWITTER_CALLBACK = "";
 process.env.MONGOURL = "";
+process.env.REDIS_PASSWORD = "";
+process.env.REDIS_HOST = "";;
+process.env.REDIS_PORT = "";
+process.env.AWS_KEY = "";
+process.env.AWS_SECRET = "";
