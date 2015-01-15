@@ -193,7 +193,7 @@ function processCommand(command, param) {
   }
   $('#message-input').val("");
   $("#message-file").val("");
-  $(".upload-image").attr("src", "/img/camera.svg");
+  $(".upload-image").attr("src", "/static/img/camera.svg");
   disableInputs(false);
 }
 
@@ -222,7 +222,7 @@ function sendMessage() {
       $("#message-input").focus();
     }, 200);
     $("#message-file").val("");
-    $(".upload-image").attr("src", "/img/camera.svg");
+    $(".upload-image").attr("src", "/static/img/camera.svg");
   }
   if (!$('#message-file')[0].files[0])
     return finishSend();
@@ -253,7 +253,7 @@ function sendMessage() {
 }
 $(".upload-image").error(function() {
   $("#message-file").val("");
-  $(".upload-image").attr("src", "/img/camera.svg");
+  $(".upload-image").attr("src", "/static/img/camera.svg");
   sweetAlert("Oops...", "Error getting image. Try again?", "error");
 });
 $("#message-file").change(function(evt) {
