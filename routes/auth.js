@@ -5,6 +5,7 @@ var OAuth = require('oauth').OAuth,
   s3 = require("s3"),
   fs = require("fs"),
   path = require("path");
+  console.log(process.env.EB);
   if (process.env.EB)
     temp_dir = "/tmp";
   else
