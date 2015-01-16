@@ -5,12 +5,11 @@ export ELASTICBEANSTALK_APP_DIR="/$ELASTICBEANSTALK_APP_NAME"
 dirApp="$ELASTICBEANSTALK_APP_DIR"
 
 # Create tmp directory
-mkdir -p $dirApp/tmp
+mkdir -p /tmp
   
 # Set permissions
-chmod 777 $dirApp
-chmod 777 $dirApp/tmp
-chown nodejs $dirApp/tmp
+chmod -R 777 /tmp
+chown -R nodejs /tmp
 
 # Ensuring all the required environment settings after all the above setup
 if ([ -f ~/.bash_profile ]) then

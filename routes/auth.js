@@ -4,8 +4,11 @@ var OAuth = require('oauth').OAuth,
   needle = require("needle"),
   s3 = require("s3"),
   fs = require("fs"),
-  path = require("path"),
-  temp_dir = path.join(process.cwd(), '../tmp/');
+  path = require("path");
+  if (process.env.EB)
+    temp_dir = "/tmp";
+  else
+    temp_dir = path.join(process.cwd(), '../tmp/');
 
 var s3Client = s3.createClient({
   maxAsyncS3: 20, // this is the default
