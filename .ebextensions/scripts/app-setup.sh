@@ -10,6 +10,7 @@ mkdir -p $dirApp/tmp
 # Set permissions
 chmod 777 $dirApp
 chmod 777 $dirApp/tmp
+chown nodejs $dirApp/tmp
 
 # Ensuring all the required environment settings after all the above setup
 if ([ -f ~/.bash_profile ]) then
