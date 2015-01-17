@@ -45,6 +45,8 @@ app.use(multer({
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(expressLayouts);
 app.use(cookieParser());
 // app.use(express.logger('tiny'))
