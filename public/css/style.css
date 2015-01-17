@@ -170,6 +170,7 @@ header .logo {
 	font-size: 50px;
 	position: absolute;
 	left: 13px;
+	width:	100%;
 }
 header .logo a {
 	color: white;
@@ -393,7 +394,6 @@ header .me #profile {
 	}
 	header .logo {
 		font-size: 30px;
-		width:	100%;
 	}
 	header .me {
 		display: none;
