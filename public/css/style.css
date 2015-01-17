@@ -393,6 +393,7 @@ header .me #profile {
 	}
 	header .logo {
 		font-size: 30px;
+		width:	100%;
 	}
 	header .me {
 		display: none;

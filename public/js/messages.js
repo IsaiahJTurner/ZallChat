@@ -272,11 +272,12 @@ function sendMessage() {
   var customHeaders = {};
   jic.upload($(".upload-image")[0], server_endpoint, server_var_name, filename, successCallback, errorCallback, duringCallback, customHeaders);
 }
+/*
 $(".upload-image").error(function() {
   $("#message-file").val("");
   $(".upload-image").attr("src", "/img/camera.svg");
   sweetAlert("Oops...", "Error getting image. Try again?", "error");
-});
+});*/
 $("#message-file").change(function(evt) {
   var target = evt.target || window.event.srcElement,
     file = target.files[0];
