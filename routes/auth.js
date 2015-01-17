@@ -7,7 +7,7 @@ var OAuth = require('oauth').OAuth,
   path = require("path");
   console.log(process.env.EB);
   if (process.env.EB)
-    temp_dir = "/tmp";
+    temp_dir = "/tmp/";
   else
     temp_dir = path.join(process.cwd(), '../tmp/');
 
