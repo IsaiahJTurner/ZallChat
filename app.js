@@ -25,14 +25,19 @@ var express = require('express'),
 		port: process.env.REDIS_PORT,
 		pass: process.env.REDIS_PASSWORD
 	})
-	User.find({username: "IsaiahJTurner"}, function(err, users) {
+	/*User.find({username: "IsaiahJTurner"}, function(err, users) {
 		console.log(user);
 		var user = users[0];
-		user.owner = true;
+		user.owner = false;
 		user.save(function(err){
 
 		});
 	})
+	var Message = require('./models/Message');
+	Message.update( {  }, { "$set" : { "deleted" : true } }, { multi : true }, function(err, numAffected) {
+		console.log(err, numAffected);
+	} );
+*/
 fs.readdirSync("./routes").forEach(function(file) {
 	require("./routes/" + file);
 });

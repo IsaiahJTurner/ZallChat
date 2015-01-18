@@ -1,19 +1,20 @@
-var ping = function() {
-  $.ajax({
-    type: "POST",
-    url: '/api/1.0/ping',
-    complete: function() {
-      setTimeout(function() {
-        ping();
-      }, 300000); // ping every 5 minutes
-    }
-  });
-};
-ping();
-
 var socket = io({
   //transports: ['websocket']
 });
+var ping = function() {
+  if (socket.connected)
+    $.ajax({
+      type: "POST",
+      url: '/api/1.0/ping',
+      complete: function() {
+
+      }
+    });
+  setTimeout(function() {
+    ping();
+  }, 300000); // ping every 5 minutes
+};
+ping();
 var fancyboxParams = {
   openEffect: 'elastic',
   closeEffect: 'elastic',
@@ -139,7 +140,7 @@ function processCommand(command, param) {
   command = command.replace("\n", "").replace("\r", "");
   if (!param)
     param = "";
-    param = param.replace("\n", "").replace("\r", "");
+  param = param.replace("\n", "").replace("\r", "");
   switch (command) {
     case "help":
       {
