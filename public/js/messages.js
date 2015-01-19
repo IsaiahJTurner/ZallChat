@@ -472,14 +472,27 @@ var checkIfShouldLoadNewMessages = function() {
         }, function() {
           location.reload();
         });
-
       }
     });
   }
 }
 $('#reader').scroll(checkIfShouldLoadNewMessages);
 $(document).scroll(checkIfShouldLoadNewMessages);
-
+$('.users').scroll(function() {
+  function setOlNe(ol, ne) {
+    ol.addClass("not-top").removeClass("top");
+    ne.addClass("top").removeClass("not-top")
+  }
+  if ($('.users').scrollTop() <= 3) {
+    $(".section.visiting").addClass("not-top").removeClass("top");
+    $(".section.chatting").addClass("not-top").removeClass("top");
+  } else if ($('.users').scrollTop() < ($(".section.chatting").height() + $("#chatting").height() - 46)) {
+    setOlNe($(".section.visiting"), $(".section.chatting"));
+  } else {
+    setOlNe($(".section.chatting"), $(".section.visiting"));
+  }
+});
+$('.users').scroll();
 function insertUser(user) {
   var userHTML = $('<div class="user animated flash" id="' + user._id + '" data-username="' + user.username + '"><a target="_blank" class="profile-link"><img data-id="' + user._id + '" draggable="true" ondragstart="drag(event)" class="profile" src=""></a><a class="name" target="_blank"><span class="real-name"></span><div class="status"></div></a></div>');
   if ("@" + user.username == $("#username").html() && !user.owner)

@@ -2,7 +2,7 @@
   BEGIN MESSAGING CODE
 */
 var uuid = require("uuid");
-var curVersion = "1.0";
+var curVersion = "1.1";
 var exports = module.exports = {
   init: function(server, settings) {
     var io = require('socket.io')(server);

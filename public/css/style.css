@@ -460,9 +460,6 @@ header .me #profile {
 	font-family: 'cocogooseregular', HelveticaNeue-Medium, 'Open Sans', sans-serif;
 	background: #7BC8FF;
 	padding: 10px;
-	-webkit-transform: skew(-10deg); 
-  -moz-transform: skew(-10deg); 
-  transform: skew(-10deg);
   background: #F0FD37;
 	margin: 0 3px;
 	text-align: center;
@@ -474,7 +471,18 @@ header .me #profile {
 	font-size: 15.5px;
 	padding: 5px;
 }
-#content .users .section .title {
+#content .users .section.not-top {
+	-webkit-transform: skew(-10deg);
+  -moz-transform: skew(-10deg);
+  transform: skew(-10deg);
+}
+#content .users .section.top {
+ 	position: fixed;
+	z-index: 1;
+	top: 59px;
+	width: 264px;
+ }
+#content .users .section.not-top .title {
 	-webkit-transform: skew(10deg); 
   -moz-transform: skew(10deg); 
   transform: skew(10deg);
