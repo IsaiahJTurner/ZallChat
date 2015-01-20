@@ -101,7 +101,7 @@ var refreshDocHeight = function() {
   $('#content').css("height", (h - 160));
   $("#reader, .messages").css("height", (h - 120 - $("#bar").height()));
   $('.users').css("height", (h - 86));
-  $('.users').css("margin-top", -(h - 120 - $("#bar").height()));
+  $('.users').css("margin-top", 70);
 };
 window.setInterval(refreshDocHeight, 200);
 refreshDocHeight();
@@ -483,7 +483,7 @@ $('.users').scroll(function() {
     ol.addClass("not-top").removeClass("top");
     ne.addClass("top").removeClass("not-top")
   }
-  if ($('.users').scrollTop() <= 3) {
+  if ($('.users').scrollTop() <= 10) {
     $(".section.visiting").addClass("not-top").removeClass("top");
     $(".section.chatting").addClass("not-top").removeClass("top");
   } else if ($('.users').scrollTop() < ($(".section.chatting").height() + $("#chatting").height() - 46)) {
@@ -569,12 +569,12 @@ socket.on('remove user', function(user) {
   $("#" + user._id).remove();
 });
 var curVersion;
-socket.on('current version', function(version) {
-  if (curVersion && version != curVersion) {
+socket.on('current version', function(msg) {
+  if (curVersion && msg["version"] != curVersion) {
     socket.disconnect();
     return swal({
       title: "ZallChat Updated",
-      text: "ZallChat was just updated! Click below to refresh and take advantage of the changes!",
+      text: "ZallChat was just updated! Click below to refresh and take advantage of the changes!\n\n Release notes: " + msg["notes"],
       type: "info",
       confirmButtonText: "Update ZallChat"
     }, function() {
@@ -586,7 +586,7 @@ socket.on('current version', function(version) {
       title: "",
       timer: 1
     });
-  curVersion = version;
+  curVersion = msg["version"];
 });
 socket.on('notify', function(error) {
   if (error.code < 0) return console.log(error);

@@ -2,7 +2,8 @@
   BEGIN MESSAGING CODE
 */
 var uuid = require("uuid");
-var curVersion = "1.1";
+var curVersion = "1.2";
+var changes = "Fixed the way Zall Chat looks on Windows and in Firefox.";
 var exports = module.exports = {
   init: function(server, settings) {
     var io = require('socket.io')(server);
@@ -46,7 +47,7 @@ var exports = module.exports = {
           settings[key] = setting;
         }
 
-        socket.emit("current version", curVersion)
+        socket.emit("current version", { version: curVersion, notes: changes });
         var cookies = cookie.parse(socket.handshake.headers['cookie']);
         if (!cookies || !cookies.sid) {
           socket.disconnect();
