@@ -1,13 +1,17 @@
-<body id="messages" class="<% if (session._user.owner) { %>owner<% } if (session._user.admin) { %> admin<% } %>">
+<% var user = session._user || new Object(); %>
+<% if (!user.username) {%><script type="text/javascript">var notLoggedIn = true;</script><% } %>
+<body id="messages" class="<% if (user.owner) { %>owner<% } if (user.admin) { %> admin<% } %>">
 	<header>
 		<div class="logo">
 			<a href="/"><%= settings.headertitle.value %></a>
 		</div>
+		<% if (user.name) { %>
 		<div class="me">
-			<!--<div id="name"><%= session._user.name %></div>-->
-			<a id="username" href="/twitter/logout">@<%= session._user.username %></a>
-			<a href="/twitter/logout"><img id="profile" class="profile" id="<%= session._user._id %>" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
-		</div>
+			<!--<div id="name"><%= user.name %></div>-->
+			<a id="username" href="/twitter/logout">@<%= user.username %></a>
+			<a href="/twitter/logout"><img id="profile" class="profile" id="<%= user._id %>" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile.substr(user.profile.lastIndexOf(".") + 1) %>"></a>
+		</div> 
+		<% } %>
 	</header>
 	<div id="content">
 		<div class="messages">
@@ -30,7 +34,7 @@
 							<img draggable="true" ondragstart="drag(event)" class="profile" data-id="<%= message._user._id %>" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= message._user._id %>.<%= message._user.profile %>">
 						</a>
 						<div class="main-content">
-							<a class="name <% if (message._user.chatting == false) { %>visitor<% } else if (message._user.owner) { %>owner<% } else if (message._user.username == session._user.username) { %>me<% } %>" target="_blank" href="https://twitter.com/<%= message._user.username %>"><%= message._user.name %></a>
+							<a class="name <% if (message._user.chatting == false) { %>visitor<% } else if (message._user.owner) { %>owner<% } else if (message._user.username == user.username) { %>me<% } %>" target="_blank" href="https://twitter.com/<%= message._user.username %>"><%= message._user.name %></a>
 							<time is="relative-time" datetime="<%= message.created_at.toISOString() %>" class="time"></time>
 							<div class="message"><% if (message.image) { %><a class="image-light" href="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/<%= message.image %>">
 							<div src="https://s3-us-west-1.amazonaws.com/zallchat-shared-images/<%= message.image %>"></div>
@@ -39,18 +43,18 @@
 					</div>
 				<% } %>
 			</div>
-			<div id="bar" <% if (session._user.admin || session._user.owner) { %>class="admin"<% } %>>
+			<div id="bar" <% if (user.admin || user.owner) { %>class="admin"<% } %>>
 				<form id="message-form">
 					<button id="send-button" type="submit">Send</button>
 					<div class="input">
-						<% if (session._user.chatting) { %>
+						<% if (user.chatting) { %>
 						<!--<input type="text" id="message-input" placeholder="Say something!">-->
 						<textarea id="message-input" placeholder="Say something!" rows="1" cols="40" class="expand"></textarea>
 						<% } else { %>
 						<!--<input type="text" id="message-input" placeholder="Say something...">-->
 						<textarea id="message-input" placeholder="Say something..." rows="1" cols="40" class="expand"></textarea>
 						<% } %>
-						<img class="upload-image" src="/img/camera.svg" <% if (session._user.admin || session._user.owner) { %>style="display:block;"<% } %>>
+						<img class="upload-image" src="/img/camera.svg" <% if (user.admin || user.owner) { %>style="display:block;"<% } %>>
 					<input id="message-file" type='file' accept="image/*" />
 					</div>
 				</form>
@@ -59,10 +63,10 @@
 		<div class="users">
 			<div class="section chatting" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="title"><%= settings.chattinglabel.value %></div></div>
 			<div id="chatting">
-				<% if (session._user.chatting && !session._user.owner) { %>
-				<div class="user me" id="<%= session._user._id %>" data-username="<%= session._user.username %>" >
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img data-id="<%= session._user._id %>" draggable="true" ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
+				<% if (user.chatting && !user.owner) { %>
+				<div class="user me" id="<%= user._id %>" data-username="<%= user.username %>" >
+					<a href="https://twitter.com/<%= user.username %>" target="_blank"><img data-id="<%= user._id %>" draggable="true" ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile.substr(user.profile.lastIndexOf(".") + 1) %>"></a>
+					<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class="status online"></div></a>
 				</div>
 				<% } %>
 				<% owner.forEach(function(user) { %>
@@ -83,11 +87,11 @@ ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.co
 			</div>
 			<div class="section visiting" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="title"><%= settings.visitinglabel.value %></div></div>
 			<div id="visiting">
-				<% if (!session._user.chatting && !session._user.owner) { %>
-				<div class="user me" id="<%= session._user._id %>" data-username="<%= session._user.username %>" >
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank"><img data-id="<%= session._user._id %>" draggable="true"
-ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= session._user._id %>.<%= session._user.profile.substr(session._user.profile.lastIndexOf(".") + 1) %>"></a>
-					<a href="https://twitter.com/<%= session._user.username %>" target="_blank" class="name"><%= session._user.name %><div class="status online"></div></a>
+				<% if (!user.chatting && !user.owner && user.username) { %>
+				<div class="user me" id="<%= user._id %>" data-username="<%= user.username %>" >
+					<a href="https://twitter.com/<%= user.username %>" target="_blank"><img data-id="<%= user._id %>" draggable="true"
+ondragstart="drag(event)" class="profile" src="https://s3-us-west-1.amazonaws.com/zallchat-profile-pictures/<%= user._id %>.<%= user.profile.substr(user.profile.lastIndexOf(".") + 1) %>"></a>
+					<a href="https://twitter.com/<%= user.username %>" target="_blank" class="name"><%= user.name %><div class="status online"></div></a>
 				</div>
 				<% } %>
 				<% visiting.forEach(function(user) { %>

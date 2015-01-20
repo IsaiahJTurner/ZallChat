@@ -19,7 +19,7 @@ exports.old = function(req, res) {
 	});
 }
 exports.messages = function(req, res) {
-	if (typeof req.session._user === 'undefined') return res.redirect("/");
+	if (typeof req.session._user === 'undefined') var userID = "000000000000000000000000"; else var userID = req.session._user._id;
 	User.find({
 		$or: [{
 			online: true
@@ -28,7 +28,7 @@ exports.messages = function(req, res) {
 		}, {
 			chatting: true
 		}]
-	}).where("_id").ne(req.session._user._id).exec(function(err, users) {
+	}).where("_id").ne(userID).exec(function(err, users) {
 		if (err) {
 			console.log(err);
 			return res.send("Unable to get chat owners.");

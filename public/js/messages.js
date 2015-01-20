@@ -1,6 +1,7 @@
-var socket = io({
-  //transports: ['websocket']
-});
+if (!notLoggedIn)
+  var socket = io({
+    //transports: ['websocket']
+  });
 var ping = function() {
   if (socket.connected)
     $.ajax({
@@ -14,6 +15,7 @@ var ping = function() {
     ping();
   }, 300000); // ping every 5 minutes
 };
+if (!notLoggedIn)
 ping();
 var fancyboxParams = {
   openEffect: 'elastic',
