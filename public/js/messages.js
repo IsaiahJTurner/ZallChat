@@ -146,7 +146,7 @@ function processCommand(command, param) {
       {
         var adminCommands = "";
         if ($("body").hasClass("admin"))
-          adminCommands = "\n\nAdmin Only Commands\n/toggle [username] - toggles the chatting role of a user";
+          adminCommands = "\n\nAdmin Only Commands\n/toggle [username] - toggles the chatting role of a user\n/find [username] - checks to see when a user was last online.";
         swal("Help", "There are lots of hidden features! Try out these commands.\n\nGeneral Commands\n/help - shows this menu\n/who - lists all users in the chat\n/notifications [on/off] - temporarily disables or reneables notifications" + adminCommands);
         break;
       }
@@ -208,7 +208,7 @@ function processCommand(command, param) {
           groupStr = groupStr.slice(0, -2);
           groupsStr[i] = groupStr;
         }
-        swal("Group Members", "Online Users\n" + groupsStr[0] + "\n\nOffline Users\n" + groupsStr[1] + "\n\nVisiting Users\n" + groupsStr[2] + "\n\nRecently Left\n" + groupsStr[3]);
+        swal("Group Members", "Online Users\n" + groupsStr[0] + "\n\nOffline Users\n" + groupsStr[1]);// too many users for this + "\n\nVisiting Users\n" + groupsStr[2] + "\n\nRecently Left\n" + groupsStr[3]);
         socket.emit('who');
         break;
       }
@@ -579,7 +579,7 @@ socket.on('current version', function(msg) {
     socket.disconnect();
     return swal({
       title: "ZallChat Updated",
-      text: "ZallChat was just updated! Click below to refresh and take advantage of the changes!\n\n Release notes: " + msg["notes"],
+      text: "ZallChat was just updated! Click below to refresh and take advantage of the changes!\n\nRelease Notes\n" + msg["notes"],
       type: "info",
       confirmButtonText: "Update ZallChat"
     }, function() {
