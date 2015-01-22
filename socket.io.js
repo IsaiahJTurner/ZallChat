@@ -2,8 +2,8 @@
   BEGIN MESSAGING CODE
 */
 var uuid = require("uuid");
-var curVersion = "1.2";
-var changes = "Fixed the way Zall Chat looks on Windows and in Firefox.";
+var curVersion = "1.3";
+var changes = "Bad word filtering is a little less aggressive on some words. Now go forth and say whatever the HELLO you want.";
 var exports = module.exports = {
   init: function(server, settings) {
     var io = require('socket.io')(server);
@@ -125,11 +125,52 @@ var exports = module.exports = {
               });
             }
           });
-          socket.on("toggle chatting", function(userID) {
+          socket.on("find", function(toFind) {
+            if (toFind["id"])
+              var query = {
+                _id: toFind["id"]
+              }
+            else
+              var query = {
+                username: { $regex : new RegExp('^' + toFind["username"] + '$', "i") }
+              }
+              console.log("query", query);
             if (session && session._user && session._user.admin) {
-              User.findOne({
-                _id: userID
-              }, function(err, user) {
+              User.findOne(query, function(err, user) {
+                if (err || !user) {
+                  console.log("unable", err, user);
+                  return socket.emit("notify", {
+                    title: "Unable To Find User",
+                    message: "Unable to get the user. Remember, usernames are case sensitive.",
+                    code: 9,
+                    type: 'error'
+                  });
+                }
+                var minutes = Math.floor(Math.floor((new Date() - user.last_seen) / 1000) / 60);
+                if (minutes > 2880) // 2 days
+                  var fakeFan = " #fakefan";
+                else
+                  fakeFan = "";
+                 socket.emit('notify', {
+                    title: "Found User",
+                      message: toFind.username + " was last seen " + minutes + " minutes ago." + fakeFan,
+                      type: (fakeFan.length > 0) ? 'error' : 'success'
+                    });
+              });
+            }
+          });
+          socket.on("toggle chatting", function(toFind) {
+            if (toFind["id"])
+              var query = {
+                _id: toFind["id"]
+              }
+            else
+              var query = {
+                username: { $regex : new RegExp('^' + toFind["username"] + '$', "i") }
+              }
+
+            if (session && session._user && session._user.admin) {
+              User.findOne(query, function(err, user) {
                 if (err || !user) {
                   console.log("unable", err, user);
                   return socket.emit("notify", {

@@ -152,7 +152,12 @@ function processCommand(command, param) {
       }
     case "toggle":
       {
-        socket.emit('toggle chatting', $("[data-username=" + param).attr("id"));
+        socket.emit('toggle chatting', { username: param });
+        break;
+      }
+    case "find":
+      {
+        socket.emit('find', { username: param });
         break;
       }
     case "notifications":
@@ -599,7 +604,7 @@ socket.on('notify', function(error) {
     disableInputs(false);
   }
   swal({
-    title: "Notification",
+    title: error.title || "Notification",
     text: error.message,
     type: error.type
   }, function() {
@@ -659,7 +664,7 @@ function drop(e) {
   e.preventDefault();
   var user_id = e.dataTransfer.getData("user_id");
   if (user_id.length < 1) return console.log(user_id);
-  socket.emit('toggle chatting', user_id);
+  socket.emit('toggle chatting', { id: user_id });
 }
 
 $(document).on("click", ".image-light", function(e) {
