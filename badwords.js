@@ -68,7 +68,7 @@ exports.list = [
                 "slut",
                 "smegma",
                 "spunk",
-                "tit",
+                "tit ",
                 "tosser",
                 "turd ",
                 "twat",

@@ -3,7 +3,7 @@
 */
 var uuid = require("uuid");
 var curVersion = "1.3";
-var changes = "Bad word filtering is a little less aggressive on some words. Now go forth and say whatever the HELLO you want.";
+var changes = "Your pe-tit-ion was succesful. That word isn't censored as much anymore.";
 var exports = module.exports = {
   init: function(server, settings) {
     var io = require('socket.io')(server);
