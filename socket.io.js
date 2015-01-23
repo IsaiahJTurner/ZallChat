@@ -2,7 +2,7 @@
   BEGIN MESSAGING CODE
 */
 var uuid = require("uuid");
-var curVersion = "1.3";
+var curVersion = "1.4";
 var changes = "Your pe-tit-ion was succesful. That word isn't censored as much anymore.";
 var exports = module.exports = {
   init: function(server, settings) {
