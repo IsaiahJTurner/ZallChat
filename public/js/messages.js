@@ -351,7 +351,8 @@ socket.on("new message", function(message) {
   if ("@" + message._user.username != $("#username").html())
     newMessage(message._user.name, $("#" + message._user._id).find("img").attr("src"), message.text);
   $("#reader").append(messageHTML);
-  location.href = "#" + message._id;
+  if (($("#reader")[0].scrollHeight - $("#reader").scrollTop()) > 1000)
+    location.href = "#" + message._id;
 });
 var updateTimestamps = function() {
   function timeDifference(current, previous) {
